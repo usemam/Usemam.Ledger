@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Deposit]
 (
-	[Id] INT NOT NULL constraint [PK_Deposit] PRIMARY KEY,
+	[Id] INT identity(1,1) NOT NULL constraint [PK_Deposit] PRIMARY KEY,
 	[Created] datetime not null,
 	[Updated] datetime not null,
 	[Name] nvarchar(500) not null,

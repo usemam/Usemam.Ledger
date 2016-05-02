@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[CreditOperation]
 (
-	[Id] INT NOT NULL constraint [PK_CreditOperation] PRIMARY KEY,
+	[Id] INT identity(1,1) NOT NULL constraint [PK_CreditOperation] PRIMARY KEY,
 	[Created] datetime not null,
 	[Updated] datetime not null,
 	[Amount] decimal(18,2) not null,
