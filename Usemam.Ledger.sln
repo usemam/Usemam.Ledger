@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Application.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Application.Queries", "Usemam.Ledger.Application.Queries\Usemam.Ledger.Application.Queries.csproj", "{593F6758-BC0D-477B-AED5-D475E404A187}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Usemam.Ledger.Database", "Usemam.Ledger.Database\Usemam.Ledger.Database.sqlproj", "{3F95E037-293C-472D-9E06-2D433911A591}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,12 @@ Global
 		{593F6758-BC0D-477B-AED5-D475E404A187}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{593F6758-BC0D-477B-AED5-D475E404A187}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{593F6758-BC0D-477B-AED5-D475E404A187}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F95E037-293C-472D-9E06-2D433911A591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F95E037-293C-472D-9E06-2D433911A591}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F95E037-293C-472D-9E06-2D433911A591}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3F95E037-293C-472D-9E06-2D433911A591}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F95E037-293C-472D-9E06-2D433911A591}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F95E037-293C-472D-9E06-2D433911A591}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

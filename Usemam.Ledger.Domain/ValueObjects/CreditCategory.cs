@@ -1,8 +1,10 @@
 ﻿namespace Usemam.Ledger.Domain.ValueObjects
 {
-    public class CreditCategory : ValueObject
+    public class CreditCategory
     {
         #region Properties & Indexers
+
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

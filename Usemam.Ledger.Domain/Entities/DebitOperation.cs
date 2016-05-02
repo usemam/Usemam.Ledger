@@ -6,9 +6,9 @@ namespace Usemam.Ledger.Domain.Entities
     {
         #region Properties & Indexers
 
-        public Deposit Source { get; set; }
-
         public Money Value { get; set; }
+
+        public Deposit Deposit { get; set; }
 
         public DebitCategory Category { get; set; }
 

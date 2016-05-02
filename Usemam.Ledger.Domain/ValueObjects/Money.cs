@@ -1,6 +1,6 @@
 ﻿namespace Usemam.Ledger.Domain.ValueObjects
 {
-    public class Money : ValueObject
+    public class Money
     {
         #region Properties & Indexers
 

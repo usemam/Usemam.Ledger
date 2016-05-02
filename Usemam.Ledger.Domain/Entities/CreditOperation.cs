@@ -8,7 +8,7 @@ namespace Usemam.Ledger.Domain.Entities
 
         public Money Value { get; set; }
 
-        public Deposit Goal { get; set; }
+        public Deposit Deposit { get; set; }
 
         public CreditCategory Category { get; set; }
 

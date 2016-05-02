@@ -2,11 +2,15 @@
 
 namespace Usemam.Ledger.Domain.Repositories
 {
-    public interface ICreditCategoryRepository : IValueObjectRepository<CreditCategory>
+    public interface ICreditCategoryRepository
     {
         #region Public methods
 
         CreditCategory GetByName(string name);
+
+        void Save(CreditCategory category);
+
+        CreditCategory GetById(int id);
 
         #endregion
     }
