@@ -1,6 +1,6 @@
 ﻿namespace Usemam.Ledger.Domain.ValueObjects
 {
-    public class DebitCategory
+    public class DebitCategory : ICategory
     {
         #region Properties & Indexers
 

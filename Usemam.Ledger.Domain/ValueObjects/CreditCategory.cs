@@ -1,6 +1,6 @@
 ﻿namespace Usemam.Ledger.Domain.ValueObjects
 {
-    public class CreditCategory
+    public class CreditCategory : ICategory
     {
         #region Properties & Indexers
 

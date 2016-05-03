@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CategoryRepositoryBase.cs" />
+    <Compile Include="CreditCategoryRepository.cs" />
+    <Compile Include="DebitCategoryRepository.cs" />
     <Compile Include="DepositRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -45,12 +45,12 @@
     <Compile Include="Entities\Deposit.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\ICreditCategoryRepository.cs" />
-    <Compile Include="Repositories\IDebitCategoryRepository.cs" />
+    <Compile Include="Repositories\ICategoryRepository.cs" />
     <Compile Include="Repositories\IDepositRepository.cs" />
     <Compile Include="Repositories\IEntityRepository.cs" />
     <Compile Include="ValueObjects\CreditCategory.cs" />
     <Compile Include="ValueObjects\DebitCategory.cs" />
+    <Compile Include="ValueObjects\ICategory.cs" />
     <Compile Include="ValueObjects\Money.cs" />
   </ItemGroup>
   <ItemGroup />
