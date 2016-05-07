@@ -48,6 +48,40 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Usemam.Ledger.Application.Commands\Usemam.Ledger.Application.Commands.csproj">
+      <Project>{640d8358-7038-4158-8829-240fa7ec95d5}</Project>
+      <Name>Usemam.Ledger.Application.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Application.Queries\Usemam.Ledger.Application.Queries.csproj">
+      <Project>{593f6758-bc0d-477b-aed5-d475e404a187}</Project>
+      <Name>Usemam.Ledger.Application.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Application\Usemam.Ledger.Application.csproj">
+      <Project>{f4ec4a69-dab5-4ce2-8e01-43a11deac6c1}</Project>
+      <Name>Usemam.Ledger.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Console.Interaction\Usemam.Ledger.Console.Interaction.csproj">
+      <Project>{600dda36-5d27-4ba2-9270-4117b3f30809}</Project>
+      <Name>Usemam.Ledger.Console.Interaction</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Domain.Repositories\Usemam.Ledger.Domain.Repositories.csproj">
+      <Project>{094e3e69-fe2e-4097-a2cc-75b5ece994b9}</Project>
+      <Name>Usemam.Ledger.Domain.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Domain\Usemam.Ledger.Domain.csproj">
+      <Project>{8704eb53-d267-4240-aa84-2645a2b1ddca}</Project>
+      <Name>Usemam.Ledger.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Infrastructure.Persistence\Usemam.Ledger.Infrastructure.Persistence.csproj">
+      <Project>{1a76db8c-2743-4eda-b20e-5203889658c5}</Project>
+      <Name>Usemam.Ledger.Infrastructure.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Usemam.Ledger.Infrastructure\Usemam.Ledger.Infrastructure.csproj">
+      <Project>{b624089d-3ba3-4ac9-92a7-5a27b897f51e}</Project>
+      <Name>Usemam.Ledger.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
