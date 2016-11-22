@@ -1,77 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Domain", "Usemam.Ledger.Domain\Usemam.Ledger.Domain.csproj", "{8704EB53-D267-4240-AA84-2645A2B1DDCA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Application", "Usemam.Ledger.Application\Usemam.Ledger.Application.csproj", "{F4EC4A69-DAB5-4CE2-8E01-43A11DEAC6C1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Application.Commands", "Usemam.Ledger.Application.Commands\Usemam.Ledger.Application.Commands.csproj", "{640D8358-7038-4158-8829-240FA7EC95D5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Application.Queries", "Usemam.Ledger.Application.Queries\Usemam.Ledger.Application.Queries.csproj", "{593F6758-BC0D-477B-AED5-D475E404A187}"
-EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Usemam.Ledger.Database", "Usemam.Ledger.Database\Usemam.Ledger.Database.sqlproj", "{3F95E037-293C-472D-9E06-2D433911A591}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Infrastructure", "Usemam.Ledger.Infrastructure\Usemam.Ledger.Infrastructure.csproj", "{B624089D-3BA3-4AC9-92A7-5A27B897F51E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Infrastructure.Persistence", "Usemam.Ledger.Infrastructure.Persistence\Usemam.Ledger.Infrastructure.Persistence.csproj", "{1A76DB8C-2743-4EDA-B20E-5203889658C5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Domain.Repositories", "Usemam.Ledger.Domain.Repositories\Usemam.Ledger.Domain.Repositories.csproj", "{094E3E69-FE2E-4097-A2CC-75B5ECE994B9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Console", "Usemam.Ledger.Console\Usemam.Ledger.Console.csproj", "{C70305CA-9AB7-470B-9A33-2BE410725D4C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.Console.Interaction", "Usemam.Ledger.Console.Interaction\Usemam.Ledger.Console.Interaction.csproj", "{600DDA36-5D27-4BA2-9270-4117B3F30809}"
-EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8704EB53-D267-4240-AA84-2645A2B1DDCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8704EB53-D267-4240-AA84-2645A2B1DDCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8704EB53-D267-4240-AA84-2645A2B1DDCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8704EB53-D267-4240-AA84-2645A2B1DDCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4EC4A69-DAB5-4CE2-8E01-43A11DEAC6C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4EC4A69-DAB5-4CE2-8E01-43A11DEAC6C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4EC4A69-DAB5-4CE2-8E01-43A11DEAC6C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4EC4A69-DAB5-4CE2-8E01-43A11DEAC6C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{640D8358-7038-4158-8829-240FA7EC95D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{640D8358-7038-4158-8829-240FA7EC95D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{640D8358-7038-4158-8829-240FA7EC95D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{640D8358-7038-4158-8829-240FA7EC95D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{593F6758-BC0D-477B-AED5-D475E404A187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{593F6758-BC0D-477B-AED5-D475E404A187}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{593F6758-BC0D-477B-AED5-D475E404A187}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{593F6758-BC0D-477B-AED5-D475E404A187}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F95E037-293C-472D-9E06-2D433911A591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F95E037-293C-472D-9E06-2D433911A591}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F95E037-293C-472D-9E06-2D433911A591}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{3F95E037-293C-472D-9E06-2D433911A591}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F95E037-293C-472D-9E06-2D433911A591}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F95E037-293C-472D-9E06-2D433911A591}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{B624089D-3BA3-4AC9-92A7-5A27B897F51E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B624089D-3BA3-4AC9-92A7-5A27B897F51E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B624089D-3BA3-4AC9-92A7-5A27B897F51E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B624089D-3BA3-4AC9-92A7-5A27B897F51E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A76DB8C-2743-4EDA-B20E-5203889658C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A76DB8C-2743-4EDA-B20E-5203889658C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A76DB8C-2743-4EDA-B20E-5203889658C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A76DB8C-2743-4EDA-B20E-5203889658C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{094E3E69-FE2E-4097-A2CC-75B5ECE994B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{094E3E69-FE2E-4097-A2CC-75B5ECE994B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{094E3E69-FE2E-4097-A2CC-75B5ECE994B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{094E3E69-FE2E-4097-A2CC-75B5ECE994B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C70305CA-9AB7-470B-9A33-2BE410725D4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C70305CA-9AB7-470B-9A33-2BE410725D4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C70305CA-9AB7-470B-9A33-2BE410725D4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C70305CA-9AB7-470B-9A33-2BE410725D4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{600DDA36-5D27-4BA2-9270-4117B3F30809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{600DDA36-5D27-4BA2-9270-4117B3F30809}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{600DDA36-5D27-4BA2-9270-4117B3F30809}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{600DDA36-5D27-4BA2-9270-4117B3F30809}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
