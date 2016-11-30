@@ -4,16 +4,19 @@ open System
 
 type Currency = USD | RUR
 
+module Constants =
+    
+    let minAmount = 0.01M
+
 type AmountType(d : decimal) =
     member this.Value = d
     static member (+) (a1 : AmountType, a2 : AmountType) =
         AmountType (a1.Value + a2.Value)
     static member (-) (a1 : AmountType, a2 : AmountType) =
-        let minAmount = 0.01M
         match a1.Value - a2.Value with
-        | rest when rest >= minAmount -> AmountType rest
+        | rest when rest >= Constants.minAmount -> AmountType rest
         | _ ->
-            sprintf "Subtracted amount cannot be less than %O." minAmount
+            sprintf "Subtracted amount cannot be less than %O." Constants.minAmount
             |> InvalidOperationException
             |> raise
 
