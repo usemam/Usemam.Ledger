@@ -36,11 +36,23 @@ module Amount =
 type Money(amount : AmountType, currency : Currency) =
     member this.Amount = amount
     member this.Currency = currency
+    override this.ToString() =
+        sprintf "%O %A" amount.Value currency
     // todo: obviously, addition and subtraction are not correct
     static member (+) (m1 : Money, m2 : Money) =
-        Money(m1.Amount + m2.Amount, m1.Currency)
+        match m1.Currency = m2.Currency with
+        | true -> Money(m1.Amount + m2.Amount, m1.Currency)
+        | false ->
+            "Currencies should be equal to perform (+) operation."
+            |> InvalidOperationException
+            |> raise
     static member (-) (m1 : Money, m2 : Money) =
-        Money(m1.Amount - m2.Amount, m1.Currency)
+        match m1.Currency = m2.Currency with
+        | true -> Money(m1.Amount - m2.Amount, m1.Currency)
+        | false ->
+            "Currencies should be equal to perform (-) operation."
+            |> InvalidOperationException
+            |> raise
 
 type AccountType =
     {

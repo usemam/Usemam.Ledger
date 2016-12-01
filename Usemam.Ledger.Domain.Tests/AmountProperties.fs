@@ -5,7 +5,7 @@ open FsCheck.Xunit
 
 type GreaterOrEqualToZeroDecimal =
     static member Decimal() =
-        Arb.Default.Decimal() |> Arb.filter (fun x -> x >= 0M)
+        Arb.Default.Decimal() |> Arb.filter (fun x -> x >= 0M && x <= 1000000M)
 
 [<Property(Arbitrary = [| typeof<GreaterOrEqualToZeroDecimal> |])>]
 let ``tryCreate should return Some when >= 0``
@@ -61,6 +61,6 @@ let ``- should produce correct result when first operand greater than second``
     (x : decimal)
     (y : decimal) =
     x - y >= Constants.minAmount ==> lazy
-    let a = AmountType x
-    let b = AmountType y
-    (a - b).Value = x - y
+        let a = AmountType x
+        let b = AmountType y
+        (a - b).Value = x - y
