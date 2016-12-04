@@ -52,8 +52,10 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="ArbitraryTypes.fs" />
     <Compile Include="AmountProperties.fs" />
     <Compile Include="MoneyProperties.fs" />
+    <Compile Include="TransferProperties.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
