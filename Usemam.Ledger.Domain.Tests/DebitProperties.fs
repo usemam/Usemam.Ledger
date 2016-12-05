@@ -4,7 +4,6 @@ open Usemam.Ledger.Domain.Tests
 
 open System
 
-open FsCheck
 open FsCheck.Xunit
 
 let isDebitSuccessful account target amount =

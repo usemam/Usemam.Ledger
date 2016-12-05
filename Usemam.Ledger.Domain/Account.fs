@@ -2,7 +2,7 @@
 
 open System
 
-type Currency = USD | RUR
+type Currency = USD
 
 module Constants =
     
@@ -42,6 +42,8 @@ module Amount =
         | true -> tryCreate d
         | false -> None
 
+    let zero = create 0M
+
 type Money(amount : AmountType, currency : Currency) =
     member this.Amount = amount
     member this.Currency = currency
@@ -58,27 +60,18 @@ type Money(amount : AmountType, currency : Currency) =
     interface IComparable with
         member this.CompareTo(obj: obj) = 
             match obj with
-            | :? Money as other when currency = other.Currency ->
+            | :? Money as other ->
                 amount.Value.CompareTo other.Amount.Value 
             | _ ->
-                "Currencies should be equal to perform comparison."
+                sprintf "Cannot perform comparison with %O." obj
                 |> InvalidOperationException
-                |> raise        
+                |> raise
 
     static member (+) (m1 : Money, m2 : Money) =
-        match m1.Currency = m2.Currency with
-        | true -> Money(m1.Amount + m2.Amount, m1.Currency)
-        | false ->
-            "Currencies should be equal to perform (+) operation."
-            |> InvalidOperationException
-            |> raise
+        Money(m1.Amount + m2.Amount, m1.Currency)
     static member (-) (m1 : Money, m2 : Money) =
-        match m1.Currency = m2.Currency with
-        | true -> Money(m1.Amount - m2.Amount, m1.Currency)
-        | false ->
-            "Currencies should be equal to perform (-) operation."
-            |> InvalidOperationException
-            |> raise
+        Money(m1.Amount - m2.Amount, m1.Currency)
+
 type AccountType =
     {
         Name : string

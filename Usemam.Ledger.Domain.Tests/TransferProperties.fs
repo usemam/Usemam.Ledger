@@ -24,7 +24,7 @@ let ``transferMoney returns Success when amount equals to balance``
         Name = "Source"
         Created = DateTimeOffset.Now
         Balance = amount }
-    let zero = Money(Amount.create 0M, amount.Currency)
+    let zero = Money(Amount.zero, amount.Currency)
     let dest = {
         Name = "Dest"
         Created = DateTimeOffset.Now
@@ -39,7 +39,7 @@ let ``transferMoney returns Success when amount less than balance``
         Name = "Source"
         Created = DateTimeOffset.Now
         Balance = balance }
-    let zero = Money(Amount.create 0M, amount.Currency)
+    let zero = Money(Amount.zero, amount.Currency)
     let dest = {
         Name = "Dest"
         Created = DateTimeOffset.Now
@@ -54,7 +54,7 @@ let ``transferMoney returns Failure when amount more than balance``
         Name = "Source"
         Created = DateTimeOffset.Now
         Balance = balance }
-    let zero = Money(Amount.create 0M, amount.Currency)
+    let zero = Money(Amount.zero, amount.Currency)
     let dest = {
         Name = "Dest"
         Created = DateTimeOffset.Now
