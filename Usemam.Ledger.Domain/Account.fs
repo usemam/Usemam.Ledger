@@ -91,7 +91,7 @@ type AccountType =
 
 module Account =
     
-    let map account f =
+    let map f account =
         {
             Name = account.Name
             Created = account.Created

@@ -56,6 +56,7 @@
     <Compile Include="AmountProperties.fs" />
     <Compile Include="MoneyProperties.fs" />
     <Compile Include="TransferProperties.fs" />
+    <Compile Include="DebitProperties.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
