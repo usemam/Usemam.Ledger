@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Domain", "Use
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Domain.Tests", "Usemam.Ledger.Domain.Tests\Usemam.Ledger.Domain.Tests.fsproj", "{00A9B1C7-A3DC-44A9-A89D-804F4B69C858}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Console", "Usemam.Ledger.Console\Usemam.Ledger.Console.fsproj", "{06D81337-2E85-41C6-9B52-25C9455DE912}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{00A9B1C7-A3DC-44A9-A89D-804F4B69C858}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00A9B1C7-A3DC-44A9-A89D-804F4B69C858}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00A9B1C7-A3DC-44A9-A89D-804F4B69C858}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06D81337-2E85-41C6-9B52-25C9455DE912}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06D81337-2E85-41C6-9B52-25C9455DE912}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06D81337-2E85-41C6-9B52-25C9455DE912}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06D81337-2E85-41C6-9B52-25C9455DE912}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

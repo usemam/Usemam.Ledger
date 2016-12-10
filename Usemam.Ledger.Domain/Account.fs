@@ -17,7 +17,7 @@ type AmountType(d : decimal) =
         | _, true -> AmountType 0M
         | rest, false when rest >= Constants.minAmount -> AmountType rest
         | _ ->
-            sprintf "Subtracted amount cannot be less than %O." Constants.minAmount
+            sprintf "Result amount cannot be less than %O." Constants.minAmount
             |> InvalidOperationException
             |> raise
 
@@ -78,9 +78,14 @@ type AccountType =
         Created : DateTimeOffset
         Balance : Money
     }
-    member this.HasEnough money = this.Balance >= money
     override this.ToString() =
         sprintf "%s %O" this.Name this.Balance
+    member this.hasEnough money =
+        match this.Balance >= money with
+        | true -> Success ()
+        | false ->
+            sprintf "Account '%O' doesn't have sufficient funds." this
+            |> Failure
 
 module Account =
     
@@ -90,3 +95,16 @@ module Account =
             Created = account.Created
             Balance = f(account.Balance)
         }
+
+    type IAccounts =
+        inherit seq<AccountType>
+        abstract getByName : string -> option<AccountType>
+
+    type AccountsInMemory(accounts : seq<AccountType>) =
+        interface IAccounts with
+            member this.GetEnumerator() = accounts.GetEnumerator()
+            member this.GetEnumerator() =
+                (this :> seq<AccountType>).GetEnumerator() :> System.Collections.IEnumerator
+            member this.getByName name =
+                accounts
+                |> Seq.tryFind (fun a -> a.Name.ToLower() = name.ToLower())
