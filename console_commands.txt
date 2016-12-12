@@ -1,0 +1,5 @@
+show accounts
+add account "Cash" 120.0
+transfer 10.0 from "Checking" to "Savings"
+credit 50.0 from "Salary" to "Checking"
+debit 30.0 from "Cash" to "Gas"

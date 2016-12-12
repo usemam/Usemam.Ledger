@@ -15,10 +15,10 @@ module Result =
         try f x |> Success
         with | ex -> Failure ex.Message
 
-    let fromOption o =
+    let fromOption failureMessage o =
         match o with
         | Some x -> Success x
-        | None -> Failure "Provided option matches with None."
+        | None -> Failure failureMessage
 
 type ResultBuilder() =
     member this.Bind(m, f) = Result.bind f m
