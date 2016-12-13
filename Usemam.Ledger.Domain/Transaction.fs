@@ -47,7 +47,7 @@ module Transfer =
     let transferMoney (source : AccountType) dest amount =
         let result = new ResultBuilder()
         result {
-            let! hasEnoughMoney = source.hasEnough amount
+            let! _ = source.hasEnough amount
             let! sourceDebited =
                 tryCatch (Account.map (fun x -> x - amount)) source
             let! destCredited =
@@ -71,7 +71,7 @@ module Debit =
     let spendMoney (account : AccountType) target amount =
         let result = new ResultBuilder()
         result {
-            let! hasEnoughMoney = account.hasEnough amount
+            let! _ = account.hasEnough amount
             let! accountDebited =
                 tryCatch (Account.map (fun x -> x - amount)) account
             return

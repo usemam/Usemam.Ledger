@@ -1,5 +1,7 @@
 ﻿module Usemam.Ledger.Console.Parser
 
+open System
+
 open Usemam.Ledger.Domain
 
 type Result<'T> = Result<'T, string>
@@ -19,20 +21,40 @@ type Command =
     | Transfer of AmountType * From * To
     | Credit of AmountType * From * To
     | Debit of AmountType * From * To
+    | Exit
 
 let (|Prefix|_|) (p : string) (s : string) =
     match s.StartsWith p with
     | true -> p.Length |> s.Substring |> Some
     | false -> None
 
-let matchSpace str =
-    match str with
-    | Prefix " " rest -> Success (" ", rest)
+let matchString str input =
+    match input with
+    | Prefix str rest -> Success (str, rest)
     | _ ->
-        sprintf "Expected ' ' to go first in '%s'." str
+        sprintf "Expected '%s' to go first in '%s'." str input
         |> Failure
 
-open System
+let matchSpace = matchString " "
+
+let empty = String.Empty
+
+let matchEndOfInput str =
+    match String.IsNullOrEmpty str with
+    | true -> Success(empty, str)
+    | false ->
+        sprintf "Expected end of input string but was '%s'." str
+        |> Failure
+
+let rec matchAny parsers str =
+    match parsers with
+    | [] ->
+        sprintf "'%s' doesn't match with any possible option." str
+        |> Failure
+    | p::rest ->
+        match p str with
+        | Success x -> Success x
+        | Failure _ -> matchAny rest str
 
 let word (str : string) =
     let w = str |> Seq.takeWhile (fun c -> c <> ' ') |> String.Concat
@@ -49,3 +71,13 @@ let matchAmount str =
             |> Result.fromOption (sprintf "%s is either negative or not a number." maybeNumber)
         return (amount, rest)
     }
+
+let matchExit str =
+    let result = new ResultBuilder()
+    result {
+        let! _, rest = matchString "exit" str
+        let! _ = matchEndOfInput rest
+        return (Exit, empty)
+    }
+
+let parse = matchExit // for testing purpose
