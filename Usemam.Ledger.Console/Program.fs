@@ -15,7 +15,8 @@ let main argv =
         let parseResult = parse input
         match parseResult with
         | Success (command, _) ->
-            cprintfn ConsoleColor.Green "Success!"
+            cprintf ConsoleColor.Green "Success! Command is "
+            printfn "%A" command
             command <> Exit
         | Failure message ->
             cprintf ConsoleColor.Red "Error: "

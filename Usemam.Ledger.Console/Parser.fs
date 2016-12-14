@@ -39,8 +39,8 @@ let matchSpace = matchString " "
 
 let empty = String.Empty
 
-let matchEndOfInput str =
-    match String.IsNullOrEmpty str with
+let matchEndOfInput (str : string) =
+    match str.Trim() = empty with
     | true -> Success(empty, str)
     | false ->
         sprintf "Expected end of input string but was '%s'." str
@@ -80,4 +80,21 @@ let matchExit str =
         return (Exit, empty)
     }
 
-let parse = matchExit // for testing purpose
+let matchQuery str =
+    let matchAccounts str =
+        let result = new ResultBuilder()
+        result {
+            let! _, rest = matchString "accounts" str
+            let! _ = matchEndOfInput rest
+            return (Accounts, empty)
+        }
+
+    let result = new ResultBuilder()
+    result {
+        let! _, rest = matchString "show" str
+        let! _, afterSpace = matchSpace rest
+        let! query, _ = matchAny [ matchAccounts ] afterSpace
+        return (Show query, empty)
+    }
+
+let parse = matchAny [ matchExit; matchQuery ]
