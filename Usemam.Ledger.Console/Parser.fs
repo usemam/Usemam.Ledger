@@ -28,18 +28,18 @@ let (|Prefix|_|) (p : string) (s : string) =
     | true -> p.Length |> s.Substring |> Some
     | false -> None
 
-let matchString str input =
+let matchReserved str input =
     match input with
     | Prefix str rest -> Success (str, rest)
     | _ ->
         sprintf "Expected '%s' to go first in '%s'." str input
         |> Failure
 
-let matchSpace = matchString " "
+let matchSpace = matchReserved " "
 
 let empty = String.Empty
 
-let matchEndOfInput (str : string) =
+let matchEnd (str : string) =
     match str.Trim() = empty with
     | true -> Success(empty, str)
     | false ->
@@ -61,40 +61,114 @@ let word (str : string) =
     let rest = str.Substring w.Length
     (w, rest)
 
+let result = new ResultBuilder()
+
 let matchAmount str =
-    let result = new ResultBuilder()
     result {
-        let! _, afterSpace = matchSpace str
-        let maybeNumber, rest = word afterSpace
+        let maybeNumber, rest = word str
         let! amount =
             Amount.tryParse maybeNumber
             |> Result.fromOption (sprintf "%s is either negative or not a number." maybeNumber)
         return (amount, rest)
     }
 
-let matchExit str =
-    let result = new ResultBuilder()
+let matchString str =
+    let reverse (s : string) =
+        s |> Array.ofSeq |> Array.rev |> String.Concat
+
     result {
-        let! _, rest = matchString "exit" str
-        let! _ = matchEndOfInput rest
+        let maybeString, rest = word str
+        let! _, afterQuote = matchReserved "\"" maybeString
+        let! _, rev = matchReserved "\"" (reverse afterQuote)
+        return (reverse rev), rest
+    }
+
+let matchExit str =
+    result {
+        let! _, rest = matchReserved "exit" str
+        let! _ = matchEnd rest
         return (Exit, empty)
     }
 
 let matchQuery str =
     let matchAccounts str =
-        let result = new ResultBuilder()
         result {
-            let! _, rest = matchString "accounts" str
-            let! _ = matchEndOfInput rest
+            let! _, rest = matchReserved "accounts" str
+            let! _ = matchEnd rest
             return (Accounts, empty)
         }
 
-    let result = new ResultBuilder()
     result {
-        let! _, rest = matchString "show" str
+        let! _, rest = matchReserved "show" str
         let! _, afterSpace = matchSpace rest
         let! query, _ = matchAny [ matchAccounts ] afterSpace
         return (Show query, empty)
     }
 
-let parse = matchAny [ matchExit; matchQuery ]
+let matchAddAccount str =
+    result {
+        let! _, afterCommand = matchReserved "add account" str
+        let! _, afterSpace1 = matchSpace afterCommand
+        let! name, afterName = matchString afterSpace1
+        let! _, afterSpace2 = matchSpace afterName
+        let! amount, rest = matchAmount afterSpace2
+        let! _ = matchEnd rest
+        return (AddAccount (name, amount), empty)
+    }
+
+let matchFrom str =
+    result {
+        let! _, afterFrom = matchReserved "from" str
+        let! _, afterSpace = matchSpace afterFrom
+        let! name, rest = matchString afterSpace
+        return (From name, rest)
+    }
+
+let matchTo str =
+    result {
+        let! _, afterFrom = matchReserved "to" str
+        let! _, afterSpace = matchSpace afterFrom
+        let! name, rest = matchString afterSpace
+        return (To name, rest)
+    }
+
+let matchTransfer str =
+    result {
+        let! _, afterTransfer = matchReserved "transfer" str
+        let! _, afterSpace1 = matchSpace afterTransfer
+        let! amount, afterAmount = matchAmount afterSpace1
+        let! _, afterSpace2 = matchSpace afterAmount
+        let! from, afterFrom = matchFrom afterSpace2
+        let! _, afterSpace3 = matchSpace afterFrom
+        let! t0, afterTo = matchTo afterSpace3
+        let! _ = matchEnd afterTo
+        return Transfer (amount, from, t0), empty
+    }
+
+let matchCredit str =
+    result {
+        let! _, afterCredit = matchReserved "credit" str
+        let! _, afterSpace1 = matchSpace afterCredit
+        let! amount, afterAmount = matchAmount afterSpace1
+        let! _, afterSpace2 = matchSpace afterAmount
+        let! from, afterFrom = matchFrom afterSpace2
+        let! _, afterSpace3 = matchSpace afterFrom
+        let! t0, afterTo = matchTo afterSpace3
+        let! _ = matchEnd afterTo
+        return Credit (amount, from, t0), empty
+    }
+
+let matchDebit str =
+    result {
+        let! _, afterDebit = matchReserved "debit" str
+        let! _, afterSpace1 = matchSpace afterDebit
+        let! amount, afterAmount = matchAmount afterSpace1
+        let! _, afterSpace2 = matchSpace afterAmount
+        let! from, afterFrom = matchFrom afterSpace2
+        let! _, afterSpace3 = matchSpace afterFrom
+        let! t0, afterTo = matchTo afterSpace3
+        let! _ = matchEnd afterTo
+        return Debit (amount, from, t0), empty
+    }
+
+let parse = matchAny [ matchExit; matchQuery; matchAddAccount; matchTransfer; matchCredit; matchDebit ]

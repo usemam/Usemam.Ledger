@@ -11,6 +11,7 @@ let main argv =
         if f() then innerLoop f
 
     let readCommandAndRun () =
+        cprintf ConsoleColor.Yellow "> "
         let input = System.Console.In.ReadLine()
         let parseResult = parse input
         match parseResult with
