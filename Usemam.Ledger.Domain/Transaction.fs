@@ -23,6 +23,7 @@ module Transaction =
     type ITransactions =
         inherit seq<TransactionType>
         abstract between : DateTimeOffset -> DateTimeOffset -> seq<TransactionType>
+        abstract add : TransactionType -> ITransactions
 
     type TransactionsInMemory(transactions : seq<TransactionType>) =
         interface ITransactions with
@@ -32,6 +33,9 @@ module Transaction =
             member this.between min max =
                 transactions
                 |> Seq.filter (fun t -> min <= t.Date && t.Date <= max)
+            member this.add transaction =
+                TransactionsInMemory(transactions |> Seq.append [transaction])
+                :> ITransactions
 
     let create amount description =
         {

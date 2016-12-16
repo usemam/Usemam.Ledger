@@ -99,6 +99,7 @@ module Account =
     type IAccounts =
         inherit seq<AccountType>
         abstract getByName : string -> option<AccountType>
+        abstract add : AccountType -> IAccounts
 
     type AccountsInMemory(accounts : seq<AccountType>) =
         interface IAccounts with
@@ -108,3 +109,6 @@ module Account =
             member this.getByName name =
                 accounts
                 |> Seq.tryFind (fun a -> a.Name.ToLower() = name.ToLower())
+            member this.add account =
+                AccountsInMemory(accounts |> Seq.append [account])
+                :> IAccounts

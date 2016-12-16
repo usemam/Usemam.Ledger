@@ -4,10 +4,7 @@ open System
 
 open Usemam.Ledger.Domain
 
-type Result<'T> = Result<'T, string>
-
-type Parser<'T> = Parser of (string -> Result<'T * string>)
-
+(* types *)
 type From = From of string
 
 type To = To of string
@@ -23,6 +20,7 @@ type Command =
     | Debit of AmountType * From * To
     | Exit
 
+(* parser *)
 let (|Prefix|_|) (p : string) (s : string) =
     match s.StartsWith p with
     | true -> p.Length |> s.Substring |> Some
