@@ -4,12 +4,17 @@ type Result<'TSuccess, 'TFailure> =
     | Success of 'TSuccess
     | Failure of 'TFailure
 
-module Result =
+type Result<'T> = Result<'T, string>
 
-    let bind f m =
+type ResultBuilder() =
+    member this.Bind(m, f) =
         match m with
         | Success x -> f x
         | Failure y -> Failure y
+    member this.Return(x) = Success x
+    member this.ReturnFrom(m) = m
+
+module Result =
 
     let tryCatch f x =
         try f x |> Success
@@ -20,7 +25,4 @@ module Result =
         | Some x -> Success x
         | None -> Failure failureMessage
 
-type ResultBuilder() =
-    member this.Bind(m, f) = Result.bind f m
-    member this.Return(x) = Success x
-    member this.ReturnFrom(m) = m
+    let result = new ResultBuilder()

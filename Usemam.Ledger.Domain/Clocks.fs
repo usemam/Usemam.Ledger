@@ -2,8 +2,6 @@
 
 open System
 
-type DateTimeProvider = unit -> DateTimeOffset
-
 module Clocks =
 
     let machineClock () = DateTimeOffset.Now

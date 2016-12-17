@@ -15,17 +15,27 @@ let main argv =
         if repeat then innerLoop f s'
 
     let readCommandAndRunService state =
+        let error message =
+            cprintf ConsoleColor.Red "Error: "
+            printfn "%s" message
+
+        let runService service =
+            match service state with
+            | Success newState -> newState
+            | Failure message ->
+                error message
+                state
+
         cprintf ConsoleColor.Yellow "> "
         let input = System.Console.In.ReadLine()
         let parseResult = parse input
         match parseResult with
         | Success (command, _) ->
             let service = fromCommand command
-            let newState = service state
+            let newState = runService service
             command <> Exit, newState
         | Failure message ->
-            cprintf ConsoleColor.Red "Error: "
-            printfn "%s" message
+            error message
             true, state
 
     innerLoop readCommandAndRunService appState

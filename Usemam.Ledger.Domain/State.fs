@@ -11,4 +11,4 @@ type State(accounts : IAccounts, transactions : ITransactions) =
     member this.addTransaction transaction =
         State(accounts, transactions.add transaction)
 
-type Service = State -> State
+type Service = State -> Result<State>

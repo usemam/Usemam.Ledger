@@ -3,6 +3,7 @@
 open System
 
 open Usemam.Ledger.Domain
+open Usemam.Ledger.Domain.Result
 
 (* types *)
 type From = From of string
@@ -54,16 +55,14 @@ let rec matchAny parsers str =
         | Success x -> Success x
         | Failure _ -> matchAny rest str
 
-let word (str : string) =
-    let w = str |> Seq.takeWhile (fun c -> c <> ' ') |> String.Concat
+let word (str : string) delimiter =
+    let w = str |> Seq.takeWhile (fun c -> c <> delimiter) |> String.Concat
     let rest = str.Substring w.Length
     (w, rest)
 
-let result = new ResultBuilder()
-
 let matchAmount str =
     result {
-        let maybeNumber, rest = word str
+        let maybeNumber, rest = word str ' '
         let! amount =
             Amount.tryParse maybeNumber
             |> Result.fromOption (sprintf "%s is either negative or not a number." maybeNumber)
@@ -71,14 +70,11 @@ let matchAmount str =
     }
 
 let matchString str =
-    let reverse (s : string) =
-        s |> Array.ofSeq |> Array.rev |> String.Concat
-
     result {
-        let maybeString, rest = word str
-        let! _, afterQuote = matchReserved "\"" maybeString
-        let! _, rev = matchReserved "\"" (reverse afterQuote)
-        return (reverse rev), rest
+        let! _, afterQuote = matchReserved "\"" str
+        let maybeString, afterString = word afterQuote '"'
+        let! _, rest = matchReserved "\"" afterString
+        return (maybeString, rest)
     }
 
 let matchExit str =

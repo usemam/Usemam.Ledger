@@ -89,6 +89,13 @@ type AccountType =
 
 module Account =
     
+    let create name balance clock =
+        {
+            Name = name
+            Balance = balance
+            Created = clock()
+        }
+
     let map f account =
         {
             Name = account.Name
