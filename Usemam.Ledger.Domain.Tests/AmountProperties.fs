@@ -52,8 +52,8 @@ let ``tryParse should return None when string is not a number``
 let ``+ should produce sum of two values``
     (x : decimal)
     (y : decimal) =
-    let a = AmountType x
-    let b = AmountType y
+    let a = Amount.create x
+    let b = Amount.create y
     (a + b).Value = x + y
 
 [<Property(Arbitrary = [| typeof<GreaterOrEqualToZeroDecimal> |])>]
@@ -61,6 +61,6 @@ let ``- should produce correct result when first operand greater than second``
     (x : decimal)
     (y : decimal) =
     x - y >= Constants.minAmount ==> lazy
-        let a = AmountType x
-        let b = AmountType y
+        let a = Amount.create x
+        let b = Amount.create y
         (a - b).Value = x - y
