@@ -33,10 +33,40 @@ let transfer amount source dest (state : State) =
     let destAccount = state.accounts.getByName dest
     result {
         let! s = fromOption "Can't find source account." sourceAccount
-        let! d = fromOption "Can't find dest account." destAccount
+        let! d = fromOption "Can't find destination account." destAccount
         let! transaction =
             Transfer.transferMoney s d money
-        return state.addTransaction transaction
+        return
+            state
+            |> fun s -> s.addTransaction transaction
+            |> fun s -> s.replaceAccount (Transaction.getSourceAccount transaction)
+            |> fun s -> s.replaceAccount (Transaction.getDestinationAccount transaction)
+    }
+
+let credit amount source dest (state : State) =
+    let money = Money(amount, USD)
+    let category = CreditSource source
+    let account = state.accounts.getByName dest
+    result {
+        let! d = fromOption "Can't find destination account." account
+        let! transaction = Credit.putMoney d category money
+        return
+            state
+            |> fun s -> s.addTransaction transaction
+            |> fun s -> s.replaceAccount (Transaction.getDestinationAccount transaction)
+    }
+
+let debit amount source dest (state : State) =
+    let money = Money(amount, USD)
+    let category = DebitTarget dest
+    let account = state.accounts.getByName source
+    result {
+        let! a = fromOption "Can't find source account." account
+        let! transaction = Debit.spendMoney a category money
+        return
+            state
+            |> fun s -> s.addTransaction transaction
+            |> fun s -> s.replaceAccount (Transaction.getSourceAccount transaction)
     }
 
 let fromCommand (command : Command) : Service =
@@ -45,4 +75,8 @@ let fromCommand (command : Command) : Service =
     | AddAccount (name, amount) -> addAccount name amount
     | Parser.Transfer (amount, From source, To dest) ->
         transfer amount source dest
+    | Parser.Credit (amount, From source, To dest) ->
+        credit amount source dest
+    | Parser.Debit (amount, From source, To dest) ->
+        debit amount source dest
     | _ -> dummy

@@ -44,6 +44,22 @@ module Transaction =
             Description = description
         }
 
+    let getSourceAccount (transaction : TransactionType) =
+        transaction.Description
+        |> fun d ->
+            match d with
+            | Transfer (s, _) -> s
+            | Debit (s, _) -> s
+            | _ -> failwith "Operation is not supported."
+
+    let getDestinationAccount (transaction : TransactionType) =
+        transaction.Description
+        |> fun d ->
+            match d with
+            | Transfer (_, a) -> a
+            | Credit (a, _) -> a
+            | _ -> failwith "Operation is not supported."
+
 open Usemam.Ledger.Domain.Result
 
 module Transfer =

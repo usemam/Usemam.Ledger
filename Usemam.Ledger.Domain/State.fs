@@ -8,6 +8,8 @@ type State(accounts : IAccounts, transactions : ITransactions) =
     member this.transactions = transactions
     member this.addAccount account =
         State(accounts.add account, transactions)
+    member this.replaceAccount account =
+        State(accounts.replace account, transactions)
     member this.addTransaction transaction =
         State(accounts, transactions.add transaction)
 
