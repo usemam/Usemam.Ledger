@@ -165,4 +165,18 @@ let matchDebit str =
         return Debit (amount, from, t0), empty
     }
 
-let parse = matchAny [ matchExit; matchQuery; matchAddAccount; matchTransfer; matchCredit; matchDebit ]
+let parse input =
+    result {
+        let! command, _ =
+            matchAny
+                [
+                    matchExit
+                    matchQuery
+                    matchAddAccount
+                    matchTransfer
+                    matchCredit
+                    matchDebit
+                ]
+                input
+        return command
+    }

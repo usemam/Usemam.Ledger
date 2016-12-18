@@ -8,10 +8,6 @@ open Usemam.Ledger.Console.Parser
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 
-let dummy state =
-    cprintfn ConsoleColor.Yellow "Doing nothing."
-    state |> Success
-
 let query q (state : State) =
     let showAccounts () =
         state.accounts
@@ -69,6 +65,12 @@ let debit amount source dest (state : State) =
             |> fun s -> s.replaceAccount (Transaction.getSourceAccount transaction)
     }
 
+let exit (state : State) =
+    result {
+        let! _ = Storage.saveState state
+        return state
+    }
+
 let fromCommand (command : Command) : Service =
     match command with
     | Show q -> query q
@@ -79,4 +81,4 @@ let fromCommand (command : Command) : Service =
         credit amount source dest
     | Parser.Debit (amount, From source, To dest) ->
         debit amount source dest
-    | _ -> dummy
+    | Exit -> exit

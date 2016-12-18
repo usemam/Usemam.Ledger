@@ -2,41 +2,39 @@
 
 open Usemam.Ledger.Console.ColorPrint
 open Usemam.Ledger.Console.Parser
+open Usemam.Ledger.Console.Storage
 open Usemam.Ledger.Console.Services
+
 open Usemam.Ledger.Domain
+open Usemam.Ledger.Domain.Result
 
 [<EntryPoint>]
 let main argv = 
 
-    let appState = State(Account.AccountsInMemory [], Transaction.TransactionsInMemory [])
+    let error message =
+        cprintf ConsoleColor.Red "Error: "
+        printfn "%s" message
+
+    let appState = loadState()
     
-    let rec innerLoop f s =
-        let repeat, s' = f(s)
-        if repeat then innerLoop f s'
-
-    let readCommandAndRunService state =
-        let error message =
-            cprintf ConsoleColor.Red "Error: "
-            printfn "%s" message
-
-        let runService service =
-            match service state with
-            | Success newState -> newState
-            | Failure message ->
-                error message
-                state
-
-        cprintf ConsoleColor.Yellow "> "
-        let input = System.Console.In.ReadLine()
-        let parseResult = parse input
-        match parseResult with
-        | Success (command, _) ->
-            let service = fromCommand command
-            let newState = runService service
-            command <> Exit, newState
+    let rec innerLoop run s =
+        match run s with
+        | Success (repeat, s') ->
+            if repeat then innerLoop run s'
         | Failure message ->
             error message
-            true, state
+            innerLoop run s
+
+    let readCommandAndRunService stateResult =
+        result {
+            let! state = stateResult
+            cprintf ConsoleColor.Yellow "> "
+            let input = System.Console.In.ReadLine()
+            let! command = parse input
+            let service = fromCommand command
+            let newState = service state
+            return command <> Exit, newState
+        }
 
     innerLoop readCommandAndRunService appState
         
