@@ -9,7 +9,7 @@ open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 
 [<EntryPoint>]
-let main argv = 
+let main _ = 
 
     let error message =
         cprintf ConsoleColor.Red "Error: "

@@ -12,6 +12,8 @@ type To = To of string
 
 type Query =
     | Accounts
+    | Today
+    | LastWeek
 
 type Command =
     | Show of Query
@@ -91,11 +93,24 @@ let matchQuery str =
             let! _ = matchEnd rest
             return (Accounts, empty)
         }
+    let matchToday str =
+        result {
+            let! _, rest = matchReserved "today" str
+            let! _ = matchEnd rest
+            return (Today, empty)
+        }
+    let matchLastWeek str =
+        result {
+            let! _, rest = matchReserved "last week" str
+            let! _ = matchEnd rest
+            return (LastWeek, empty)
+        }
 
     result {
         let! _, rest = matchReserved "show" str
         let! _, afterSpace = matchSpace rest
-        let! query, _ = matchAny [ matchAccounts ] afterSpace
+        let! query, _ =
+            matchAny [ matchAccounts; matchToday; matchLastWeek ] afterSpace
         return (Show query, empty)
     }
 

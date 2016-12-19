@@ -1,6 +1,15 @@
+-- inquiries
 show accounts
+show today
+show last week
+
+-- add account <name> <starting balance>
 add account "Cash" 120.0
+
+-- transactions
 transfer 10.0 from "Checking" to "Savings"
 credit 50.0 from "Salary" to "Checking"
 debit 30.0 from "Cash" to "Gas"
+
+-- save and close
 exit

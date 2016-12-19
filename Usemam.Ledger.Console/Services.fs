@@ -12,9 +12,17 @@ let query q (state : State) =
     let showAccounts () =
         state.accounts
         |> Seq.iteri (fun i a -> printfn "%i. %O" (i+1) a)
+    
+    let showTransactions period =
+        let min, max = Dates.BoundariesIn period
+        state.transactions.between min max
+        |> Seq.sortBy (fun t -> t.Date)
+        |> Seq.iteri (fun i t -> printfn "%i. %O" (i+1) t)
 
     match q with
     | Accounts -> showAccounts ()
+    | Today -> Clocks.machineClock |> Dates.today |> showTransactions
+    | Query.LastWeek -> Clocks.machineClock |> Dates.lastWeek |> showTransactions
     Success state
 
 let addAccount name amount (state : State) =
@@ -31,7 +39,7 @@ let transfer amount source dest (state : State) =
         let! s = fromOption "Can't find source account." sourceAccount
         let! d = fromOption "Can't find destination account." destAccount
         let! transaction =
-            Transfer.transferMoney s d money
+            Transaction.transferMoney s d money Clocks.machineClock
         return
             state
             |> fun s -> s.addTransaction transaction
@@ -45,7 +53,7 @@ let credit amount source dest (state : State) =
     let account = state.accounts.getByName dest
     result {
         let! d = fromOption "Can't find destination account." account
-        let! transaction = Credit.putMoney d category money
+        let! transaction = Transaction.putMoney d category money Clocks.machineClock
         return
             state
             |> fun s -> s.addTransaction transaction
@@ -58,7 +66,7 @@ let debit amount source dest (state : State) =
     let account = state.accounts.getByName source
     result {
         let! a = fromOption "Can't find source account." account
-        let! transaction = Debit.spendMoney a category money
+        let! transaction = Transaction.spendMoney a category money Clocks.machineClock
         return
             state
             |> fun s -> s.addTransaction transaction

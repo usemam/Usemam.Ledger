@@ -79,7 +79,7 @@ type AccountType =
         Balance : Money
     }
     override this.ToString() =
-        sprintf "%s %O" this.Name this.Balance
+        sprintf "%s - %O - created on %O" this.Name this.Balance this.Created
     member this.hasEnough money =
         match this.Balance >= money with
         | true -> Success ()

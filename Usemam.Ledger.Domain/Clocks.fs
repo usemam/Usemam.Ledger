@@ -11,22 +11,20 @@ module Clocks =
 type Period =
     | Year of int
     | Month of int * int
+    | Week of int * int * int
     | Day of int * int * int
 
 module Dates =
     
     let toOffset = DateTimeOffset
 
-    let InitInfinite (date : DateTimeOffset) =
-        date |> Seq.unfold (fun d -> Some(d, d.AddDays 1.0))
+    let today clock =
+        let date : DateTimeOffset = clock()
+        Day(date.Year, date.Month, date.Day)
 
-    let In period =
-        let generate dt predicate =
-            dt |> InitInfinite |> Seq.takeWhile predicate
-        match period with
-        | Year(y) -> generate (DateTime(y, 1, 1) |> toOffset) (fun d -> d.Year = y)
-        | Month(y, m) -> generate (DateTime(y, m, 1) |> toOffset) (fun d -> d.Month = m)
-        | Day(y, m, d) -> DateTime(y, m, d) |> toOffset |> Seq.singleton
+    let lastWeek (clock : unit -> DateTimeOffset) =
+        let date = clock().AddDays -7.
+        Week(date.Year, date.Month, date.Day)
 
     let BoundariesIn period =
         let getBoundaries firstTick (forward : DateTimeOffset -> DateTimeOffset) =
@@ -35,4 +33,5 @@ module Dates =
         match period with
         | Year(y) -> getBoundaries (DateTime(y, 1, 1) |> toOffset) (fun d -> d.AddYears 1)
         | Month(y, m) -> getBoundaries (DateTime(y, m, 1) |> toOffset) (fun d -> d.AddMonths 1)
+        | Week(y, m, d) -> getBoundaries (DateTime(y, m, d) |> toOffset) (fun d -> d.AddDays 8.)
         | Day(y, m, d) -> getBoundaries (DateTime(y, m, d) |> toOffset) (fun d -> d.AddDays 1.0)

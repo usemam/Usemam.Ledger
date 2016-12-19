@@ -1,13 +1,24 @@
 ﻿namespace Usemam.Ledger.Domain
 
-type CreditSource = CreditSource of string
+type CreditSource =
+    | CreditSource of string
+    override this.ToString() =
+        match this with | CreditSource s -> s
 
-type DebitTarget = DebitTarget of string
+type DebitTarget =
+    | DebitTarget of string
+    override this.ToString() =
+        match this with | DebitTarget s -> s
 
 type TransactionDescription =
     | Transfer of AccountType * AccountType // first account is source, second is a destination
     | Credit of AccountType * CreditSource
     | Debit of AccountType * DebitTarget
+    override this.ToString() =
+        match this with
+        | Transfer (a1, a2) -> sprintf "transferred from %s to %s" a1.Name a2.Name
+        | Credit (a, s) -> sprintf "credited from %s to %O" a.Name s
+        | Debit (a, t) -> sprintf "spent from %s on %O" a.Name t
 
 open System
 
@@ -17,6 +28,8 @@ type TransactionType =
         Sum : Money
         Description : TransactionDescription
     }
+    override this.ToString() =
+        sprintf "%O - %O - %O" this.Date this.Sum this.Description
 
 module Transaction =
     
@@ -37,9 +50,9 @@ module Transaction =
                 TransactionsInMemory(transactions |> Seq.append [transaction])
                 :> ITransactions
 
-    let create amount description =
+    let create clock amount description =
         {
-            Date = DateTimeOffset.Now
+            Date = clock()
             Sum = amount
             Description = description
         }
@@ -60,11 +73,9 @@ module Transaction =
             | Credit (a, _) -> a
             | _ -> failwith "Operation is not supported."
 
-open Usemam.Ledger.Domain.Result
+    open Usemam.Ledger.Domain.Result
 
-module Transfer =
-
-    let transferMoney (source : AccountType) dest amount =
+    let transferMoney (source : AccountType) dest amount clock =
         let result = new ResultBuilder()
         result {
             let! _ = source.hasEnough amount
@@ -75,20 +86,16 @@ module Transfer =
             return
                 (sourceDebited, destCredited)
                 |> Transfer
-                |> Transaction.create amount
+                |> create clock amount
         }
 
-module Credit =
-    
-    let putMoney account source amount =
+    let putMoney account source amount clock =
         (account |> Account.map (fun x -> x + amount), source)
         |> Credit
-        |> Transaction.create amount
+        |> create clock amount
         |> Success
 
-module Debit =
-    
-    let spendMoney (account : AccountType) target amount =
+    let spendMoney (account : AccountType) target amount clock =
         let result = new ResultBuilder()
         result {
             let! _ = account.hasEnough amount
@@ -97,5 +104,5 @@ module Debit =
             return
                 (accountDebited, target)
                 |> Debit
-                |> Transaction.create amount
+                |> create clock amount
         }

@@ -9,7 +9,7 @@ open FsCheck.Xunit
 
 let isTransferSuccessful source dest amount =
     let initialBalance = source.Balance
-    match Transfer.transferMoney source dest amount with
+    match Transaction.transferMoney source dest amount Clocks.machineClock with
     | Success t ->
         t.Sum = amount &&
             match t.Description with

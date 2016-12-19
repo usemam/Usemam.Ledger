@@ -8,7 +8,7 @@ open FsCheck.Xunit
 
 let isDebitSuccessful account target amount =
     let initialBalance = account.Balance
-    match Debit.spendMoney account target amount with
+    match Transaction.spendMoney account target amount Clocks.machineClock with
     | Success t ->
         t.Sum = amount &&
             match t.Description with
