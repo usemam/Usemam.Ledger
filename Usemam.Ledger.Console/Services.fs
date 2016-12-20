@@ -3,6 +3,7 @@
 open System
 
 open Usemam.Ledger.Console.ColorPrint
+open Usemam.Ledger.Console.Command
 open Usemam.Ledger.Console.Parser
 
 open Usemam.Ledger.Domain
@@ -31,7 +32,7 @@ let addAccount name amount (state : State) =
     |> state.addAccount
     |> Success
 
-let transfer amount source dest (state : State) =
+let transfer amount source dest clock (state : State) =
     let money = Money(amount, USD)
     let sourceAccount = state.accounts.getByName source
     let destAccount = state.accounts.getByName dest
@@ -39,7 +40,7 @@ let transfer amount source dest (state : State) =
         let! s = fromOption "Can't find source account." sourceAccount
         let! d = fromOption "Can't find destination account." destAccount
         let! transaction =
-            Transaction.transferMoney s d money Clocks.machineClock
+            Transaction.transferMoney s d money clock
         return
             state
             |> fun s -> s.addTransaction transaction
@@ -47,26 +48,26 @@ let transfer amount source dest (state : State) =
             |> fun s -> s.replaceAccount (Transaction.getDestinationAccount transaction)
     }
 
-let credit amount source dest (state : State) =
+let credit amount source dest clock (state : State) =
     let money = Money(amount, USD)
     let category = CreditSource source
     let account = state.accounts.getByName dest
     result {
         let! d = fromOption "Can't find destination account." account
-        let! transaction = Transaction.putMoney d category money Clocks.machineClock
+        let! transaction = Transaction.putMoney d category money clock
         return
             state
             |> fun s -> s.addTransaction transaction
             |> fun s -> s.replaceAccount (Transaction.getDestinationAccount transaction)
     }
 
-let debit amount source dest (state : State) =
+let debit amount source dest clock (state : State) =
     let money = Money(amount, USD)
     let category = DebitTarget dest
     let account = state.accounts.getByName source
     result {
         let! a = fromOption "Can't find source account." account
-        let! transaction = Transaction.spendMoney a category money Clocks.machineClock
+        let! transaction = Transaction.spendMoney a category money clock
         return
             state
             |> fun s -> s.addTransaction transaction
@@ -83,10 +84,10 @@ let fromCommand (command : Command) : Service =
     match command with
     | Show q -> query q
     | AddAccount (name, amount) -> addAccount name amount
-    | Parser.Transfer (amount, From source, To dest) ->
-        transfer amount source dest
-    | Parser.Credit (amount, From source, To dest) ->
-        credit amount source dest
-    | Parser.Debit (amount, From source, To dest) ->
-        debit amount source dest
+    | Command.Transfer (amount, On clock, From source, To dest) ->
+        transfer amount source dest clock
+    | Command.Credit (amount, On clock, From source, To dest) ->
+        credit amount source dest clock
+    | Command.Debit (amount, On clock, From source, To dest) ->
+        debit amount source dest clock
     | Exit -> exit

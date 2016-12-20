@@ -8,6 +8,8 @@ module Clocks =
 
     let utcClock () = DateTimeOffset.UtcNow
 
+    let moment (date : DateTimeOffset) = fun () -> date
+
 type Period =
     | Year of int
     | Month of int * int

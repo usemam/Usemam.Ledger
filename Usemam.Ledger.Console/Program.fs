@@ -1,6 +1,7 @@
 ﻿open System
 
 open Usemam.Ledger.Console.ColorPrint
+open Usemam.Ledger.Console.Command
 open Usemam.Ledger.Console.Parser
 open Usemam.Ledger.Console.Storage
 open Usemam.Ledger.Console.Services
@@ -33,7 +34,7 @@ let main _ =
             let! command = parse input
             let service = fromCommand command
             let newState = service state
-            return command <> Exit, newState
+            return (not << isExit) command, newState
         }
 
     innerLoop readCommandAndRunService appState

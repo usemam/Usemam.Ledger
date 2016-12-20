@@ -2,26 +2,10 @@
 
 open System
 
+open Usemam.Ledger.Console.Command
+
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
-
-(* types *)
-type From = From of string
-
-type To = To of string
-
-type Query =
-    | Accounts
-    | Today
-    | LastWeek
-
-type Command =
-    | Show of Query
-    | AddAccount of string * AmountType
-    | Transfer of AmountType * From * To
-    | Credit of AmountType * From * To
-    | Debit of AmountType * From * To
-    | Exit
 
 (* parser *)
 let (|Prefix|_|) (p : string) (s : string) =
@@ -125,6 +109,33 @@ let matchAddAccount str =
         return (AddAccount (name, amount), empty)
     }
 
+let matchOn str =
+    let matchClock str =
+        result {
+            let maybeDate, rest = word str ' '
+            let! date = tryCatch DateTimeOffset.Parse maybeDate
+            return (Clocks.moment date, rest)
+        }
+
+    let matchFromInput input =
+        result {
+            let! _, afterOn = matchReserved "on" input
+            let! _, afterSpace = matchSpace afterOn
+            let! clock, afterClock = matchClock afterSpace
+            let! _, rest = matchSpace afterClock
+            return clock, rest
+        }
+
+    let now str =
+        result {
+            return (Clocks.machineClock, str)
+        }
+
+    result {
+        let! clock, rest = matchAny [matchFromInput; now] str
+        return (On clock, rest)
+    }
+
 let matchFrom str =
     result {
         let! _, afterFrom = matchReserved "from" str
@@ -147,11 +158,12 @@ let matchTransfer str =
         let! _, afterSpace1 = matchSpace afterTransfer
         let! amount, afterAmount = matchAmount afterSpace1
         let! _, afterSpace2 = matchSpace afterAmount
-        let! from, afterFrom = matchFrom afterSpace2
+        let! on, afterOn = matchOn afterSpace2
+        let! from, afterFrom = matchFrom afterOn
         let! _, afterSpace3 = matchSpace afterFrom
         let! t0, afterTo = matchTo afterSpace3
         let! _ = matchEnd afterTo
-        return Transfer (amount, from, t0), empty
+        return Command.Transfer (amount, on, from, t0), empty
     }
 
 let matchCredit str =
@@ -160,11 +172,12 @@ let matchCredit str =
         let! _, afterSpace1 = matchSpace afterCredit
         let! amount, afterAmount = matchAmount afterSpace1
         let! _, afterSpace2 = matchSpace afterAmount
-        let! from, afterFrom = matchFrom afterSpace2
+        let! on, afterOn = matchOn afterSpace2
+        let! from, afterFrom = matchFrom afterOn
         let! _, afterSpace3 = matchSpace afterFrom
         let! t0, afterTo = matchTo afterSpace3
         let! _ = matchEnd afterTo
-        return Credit (amount, from, t0), empty
+        return Command.Credit (amount, on, from, t0), empty
     }
 
 let matchDebit str =
@@ -173,11 +186,12 @@ let matchDebit str =
         let! _, afterSpace1 = matchSpace afterDebit
         let! amount, afterAmount = matchAmount afterSpace1
         let! _, afterSpace2 = matchSpace afterAmount
-        let! from, afterFrom = matchFrom afterSpace2
+        let! on, afterOn = matchOn afterSpace2
+        let! from, afterFrom = matchFrom afterOn
         let! _, afterSpace3 = matchSpace afterFrom
         let! t0, afterTo = matchTo afterSpace3
         let! _ = matchEnd afterTo
-        return Debit (amount, from, t0), empty
+        return Command.Debit (amount, on, from, t0), empty
     }
 
 let parse input =
