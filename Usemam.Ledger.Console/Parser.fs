@@ -7,31 +7,30 @@ open Usemam.Ledger.Console.Command
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 
-(* parser *)
 let (|Prefix|_|) (p : string) (s : string) =
     match s.StartsWith p with
     | true -> p.Length |> s.Substring |> Some
     | false -> None
 
-let matchReserved str input =
+let reserved str input =
     match input with
     | Prefix str rest -> Success (str, rest)
     | _ ->
         sprintf "Expected '%s' to go first in '%s'." str input
         |> Failure
 
-let matchSpace = matchReserved " "
+let space = reserved " "
 
 let empty = String.Empty
 
-let matchEnd (str : string) =
+let fin (str : string) =
     match str.Trim() = empty with
     | true -> Success(empty, str)
     | false ->
         sprintf "Expected end of input string but was '%s'." str
         |> Failure
 
-let rec matchAny parsers str =
+let rec any parsers str =
     match parsers with
     | [] ->
         sprintf "'%s' doesn't match with any possible option." str
@@ -39,14 +38,28 @@ let rec matchAny parsers str =
     | p::rest ->
         match p str with
         | Success x -> Success x
-        | Failure _ -> matchAny rest str
+        | Failure _ -> any rest str
+
+let all parsers str =
+    let rec innerMatch parsers parsed str =
+        result {
+            match parsers with
+            | [] -> return (parsed, str)
+            | p::ps ->
+                let! x, rest = p str
+                return! innerMatch ps (x::parsed) rest
+        }
+    result {
+        let! matched, rest = innerMatch parsers [] str
+        return matched |> List.rev, rest
+    }
 
 let word (str : string) delimiter =
     let w = str |> Seq.takeWhile (fun c -> c <> delimiter) |> String.Concat
     let rest = str.Substring w.Length
     (w, rest)
 
-let matchAmount str =
+let amount str =
     result {
         let maybeNumber, rest = word str ' '
         let! amount =
@@ -57,155 +70,126 @@ let matchAmount str =
 
 let matchString str =
     result {
-        let! _, afterQuote = matchReserved "\"" str
+        let! _, afterQuote = reserved "\"" str
         let maybeString, afterString = word afterQuote '"'
-        let! _, rest = matchReserved "\"" afterString
+        let! _, rest = reserved "\"" afterString
         return (maybeString, rest)
     }
 
-let matchExit str =
+let exit str =
     result {
-        let! _, rest = matchReserved "exit" str
-        let! _ = matchEnd rest
-        return (Exit, empty)
+        let! _ = all [reserved "exit"; fin] str
+        return Exit
     }
 
-let matchQuery str =
+let show str =
     let matchAccounts str =
         result {
-            let! _, rest = matchReserved "accounts" str
-            let! _ = matchEnd rest
-            return (Accounts, empty)
+            let! _ = all [reserved "accounts"; fin] str
+            return Accounts
         }
     let matchToday str =
         result {
-            let! _, rest = matchReserved "today" str
-            let! _ = matchEnd rest
-            return (Today, empty)
+            let! _ = all [reserved "today"; fin] str
+            return Today
         }
     let matchLastWeek str =
         result {
-            let! _, rest = matchReserved "last week" str
-            let! _ = matchEnd rest
-            return (LastWeek, empty)
+            let! _ = all [reserved "last week"; fin] str
+            return LastWeek
         }
-
     result {
-        let! _, rest = matchReserved "show" str
-        let! _, afterSpace = matchSpace rest
-        let! query, _ =
-            matchAny [ matchAccounts; matchToday; matchLastWeek ] afterSpace
-        return (Show query, empty)
+        let! _, rest = all [reserved "show"; space] str
+        let! query =
+            any [ matchAccounts; matchToday; matchLastWeek ] rest
+        return Show query
     }
 
-let matchAddAccount str =
+let addAccount str =
     result {
-        let! _, afterCommand = matchReserved "add account" str
-        let! _, afterSpace1 = matchSpace afterCommand
+        let! _, afterCommand = reserved "add account" str
+        let! _, afterSpace1 = space afterCommand
         let! name, afterName = matchString afterSpace1
-        let! _, afterSpace2 = matchSpace afterName
-        let! amount, rest = matchAmount afterSpace2
-        let! _ = matchEnd rest
-        return (AddAccount (name, amount), empty)
+        let! _, afterSpace2 = space afterName
+        let! amount, rest = amount afterSpace2
+        let! _ = fin rest
+        return AddAccount (name, amount)
     }
 
-let matchOn str =
-    let matchClock str =
+let details str =
+
+    let matchOn str =
+        let clock str =
+            result {
+                let maybeDate, rest = word str ' '
+                let! date = tryCatch DateTimeOffset.Parse maybeDate
+                return (Clocks.moment date, rest)
+            }
+        let fromInput input =
+            result {
+                let! _, afterOn = reserved "on" input
+                let! _, afterSpace = space afterOn
+                let! clock, afterClock = clock afterSpace
+                let! _, rest = space afterClock
+                return clock, rest
+            }
+        let now str =
+            result {
+                return (Clocks.machineClock, str)
+            }
         result {
-            let maybeDate, rest = word str ' '
-            let! date = tryCatch DateTimeOffset.Parse maybeDate
-            return (Clocks.moment date, rest)
+            let! clock, rest = any [fromInput; now] str
+            return (On clock, rest)
         }
 
-    let matchFromInput input =
+    let matchFrom str =
         result {
-            let! _, afterOn = matchReserved "on" input
-            let! _, afterSpace = matchSpace afterOn
-            let! clock, afterClock = matchClock afterSpace
-            let! _, rest = matchSpace afterClock
-            return clock, rest
+            let! _, afterFrom = reserved "from" str
+            let! _, afterSpace = space afterFrom
+            let! name, rest = matchString afterSpace
+            return (From name, rest)
         }
 
-    let now str =
+    let matchTo str =
         result {
-            return (Clocks.machineClock, str)
+            let! _, afterFrom = reserved "to" str
+            let! _, afterSpace = space afterFrom
+            let! name, rest = matchString afterSpace
+            return (To name, rest)
         }
 
     result {
-        let! clock, rest = matchAny [matchFromInput; now] str
-        return (On clock, rest)
-    }
-
-let matchFrom str =
-    result {
-        let! _, afterFrom = matchReserved "from" str
-        let! _, afterSpace = matchSpace afterFrom
-        let! name, rest = matchString afterSpace
-        return (From name, rest)
-    }
-
-let matchTo str =
-    result {
-        let! _, afterFrom = matchReserved "to" str
-        let! _, afterSpace = matchSpace afterFrom
-        let! name, rest = matchString afterSpace
-        return (To name, rest)
-    }
-
-let matchTransfer str =
-    result {
-        let! _, afterTransfer = matchReserved "transfer" str
-        let! _, afterSpace1 = matchSpace afterTransfer
-        let! amount, afterAmount = matchAmount afterSpace1
-        let! _, afterSpace2 = matchSpace afterAmount
+        let! _, afterSpace1 = space str
+        let! amount, afterAmount = amount afterSpace1
+        let! _, afterSpace2 = space afterAmount
         let! on, afterOn = matchOn afterSpace2
         let! from, afterFrom = matchFrom afterOn
-        let! _, afterSpace3 = matchSpace afterFrom
+        let! _, afterSpace3 = space afterFrom
         let! t0, afterTo = matchTo afterSpace3
-        let! _ = matchEnd afterTo
-        return Command.Transfer (amount, on, from, t0), empty
+        let! _ = fin afterTo
+        return (amount, on, from, t0)
     }
 
-let matchCredit str =
+let transfer str =
     result {
-        let! _, afterCredit = matchReserved "credit" str
-        let! _, afterSpace1 = matchSpace afterCredit
-        let! amount, afterAmount = matchAmount afterSpace1
-        let! _, afterSpace2 = matchSpace afterAmount
-        let! on, afterOn = matchOn afterSpace2
-        let! from, afterFrom = matchFrom afterOn
-        let! _, afterSpace3 = matchSpace afterFrom
-        let! t0, afterTo = matchTo afterSpace3
-        let! _ = matchEnd afterTo
-        return Command.Credit (amount, on, from, t0), empty
+        let! _, afterTransfer = reserved "transfer" str
+        let! amount, on, from, t0 = details afterTransfer
+        return Command.Transfer (amount, on, from, t0)
     }
 
-let matchDebit str =
+let credit str =
     result {
-        let! _, afterDebit = matchReserved "debit" str
-        let! _, afterSpace1 = matchSpace afterDebit
-        let! amount, afterAmount = matchAmount afterSpace1
-        let! _, afterSpace2 = matchSpace afterAmount
-        let! on, afterOn = matchOn afterSpace2
-        let! from, afterFrom = matchFrom afterOn
-        let! _, afterSpace3 = matchSpace afterFrom
-        let! t0, afterTo = matchTo afterSpace3
-        let! _ = matchEnd afterTo
-        return Command.Debit (amount, on, from, t0), empty
+        let! _, afterCredit = reserved "credit" str
+        let! amount, on, from, t0 = details afterCredit
+        return Command.Credit (amount, on, from, t0)
     }
 
-let parse input =
+let debit str =
     result {
-        let! command, _ =
-            matchAny
-                [
-                    matchExit
-                    matchQuery
-                    matchAddAccount
-                    matchTransfer
-                    matchCredit
-                    matchDebit
-                ]
-                input
-        return command
+        let! _, afterDebit = reserved "debit" str
+        let! amount, on, from, t0 = details afterDebit
+        return Command.Debit (amount, on, from, t0)
     }
+
+let parse  =
+    any [ exit; show; addAccount; transfer; credit; debit ]
