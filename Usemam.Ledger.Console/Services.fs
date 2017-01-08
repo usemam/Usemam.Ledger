@@ -28,7 +28,7 @@ let query q (state : State) =
 
 let addAccount name amount (state : State) =
     let balance = Money(amount, USD)
-    Account.create name balance Clocks.machineClock
+    Account.create Clocks.machineClock name balance
     |> state.addAccount
     |> Success
 

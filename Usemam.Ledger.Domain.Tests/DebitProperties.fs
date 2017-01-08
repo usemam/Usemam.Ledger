@@ -16,15 +16,12 @@ let isDebitSuccessful account target amount =
             | _ -> false
     | Failure _ -> false
 
+let clock = fun () -> DateTimeOffset.Now
+
 [<Property(Arbitrary = [| typeof<MoneyArbitrary> |])>]
 let ``spendMoney returns Success when amount equals to balance``
     (amount : Money) =
-    let account =
-        {
-            Name = "Account"
-            Created = DateTimeOffset.Now
-            Balance = amount
-        }
+    let account = Account.create clock "Account" amount
     let target = DebitTarget "Target"
     isDebitSuccessful account target amount
 
@@ -32,11 +29,8 @@ let ``spendMoney returns Success when amount equals to balance``
 let ``spendMoney returns Success when amount less than balance``
     (amount : Money) =
     let account =
-        {
-            Name = "Account"
-            Created = DateTimeOffset.Now
-            Balance = amount + Money(Amount.create 1M, amount.Currency)
-        }
+        amount + Money(Amount.create 1M, amount.Currency)
+        |> Account.create clock "Account"
     let target = DebitTarget "Target"
     isDebitSuccessful account target amount
 
@@ -44,11 +38,8 @@ let ``spendMoney returns Success when amount less than balance``
 let ``spendMoney returns Failure when amount more than balance``
     (amount : Money) =
     let account =
-        {
-            Name = "Account"
-            Created = DateTimeOffset.Now
-            Balance = amount - Money(Amount.create 1M, amount.Currency)
-        }
+        amount - Money(Amount.create 1M, amount.Currency)
+        |> Account.create clock "Account"
     let target = DebitTarget "Target"
     isDebitSuccessful account target amount
     |> not

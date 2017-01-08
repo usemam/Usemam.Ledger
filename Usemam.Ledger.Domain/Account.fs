@@ -77,6 +77,7 @@ type AccountType =
         Name : string
         Created : DateTimeOffset
         Balance : Money
+        Credit : Money
     }
     override this.ToString() =
         sprintf "%s - %O - created on %O" this.Name this.Balance this.Created
@@ -88,18 +89,24 @@ type AccountType =
             |> Failure
 
 module Account =
-    
-    let create name balance clock =
+
+    let createWithCredit clock name balance credit =
         {
             Name = name
             Balance = balance
+            Credit = credit
             Created = clock()
         }
+    
+    let create clock name (balance : Money) =
+        Money(Amount.zero, balance.Currency)
+        |> createWithCredit clock name balance
 
     let map f account =
         {
             Name = account.Name
             Created = account.Created
+            Credit = account.Credit
             Balance = f(account.Balance)
         }
 
