@@ -68,3 +68,12 @@ let ``- should produce correct result when first operand greater than second``
         let a = Amount.create x
         let b = Amount.create y
         (a - b).Value = x - y
+
+[<Property(Arbitrary = [| typeof<ValidDecimal> |])>]
+let ``- should produce correct result when first operand less than second``
+    (x : decimal)
+    (y : decimal) =
+    (x < y && Math.Abs(x - y) >= Constants.minAmount) ==> lazy
+        let a = Amount.create x
+        let b = Amount.create y
+        (a - b).Value = x - y

@@ -15,7 +15,7 @@ type AmountType =
     static member (-) (a1 : AmountType, a2 : AmountType) =
         match (a1.Value - a2.Value), a1.Value = a2.Value with
         | _, true -> { Value = 0M }
-        | rest, false when rest >= Constants.minAmount -> { Value = rest }
+        | rest, false when Math.Abs(rest) >= Constants.minAmount -> { Value = rest }
         | _ ->
             sprintf "Result amount cannot be less than %O." Constants.minAmount
             |> InvalidOperationException
