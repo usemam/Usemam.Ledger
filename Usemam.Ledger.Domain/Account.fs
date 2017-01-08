@@ -24,7 +24,7 @@ type AmountType =
 module Amount =
 
     let tryCreate (d : decimal) =
-        if d >= 0M
+        if d = 0M || Math.Abs(d) >= Constants.minAmount
         then Some { Value = d }
         else None
 
