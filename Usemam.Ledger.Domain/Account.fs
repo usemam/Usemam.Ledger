@@ -82,7 +82,7 @@ type AccountType =
     override this.ToString() =
         sprintf "%s - %O - created on %O" this.Name this.Balance this.Created
     member this.hasEnough money =
-        match this.Balance >= money with
+        match this.Balance + this.Credit >= money with
         | true -> Success ()
         | false ->
             sprintf "Account '%O' doesn't have sufficient funds." this

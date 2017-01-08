@@ -43,3 +43,12 @@ let ``spendMoney returns Failure when amount more than balance``
     let target = DebitTarget "Target"
     isDebitSuccessful account target amount
     |> not
+
+[<Property(Arbitrary = [| typeof<MoneyArbitrary> |])>]
+let ``spendMoney returns Success when amount less than balance + credit``
+    (amount : Money) =
+    let balance = Money(Amount.zero, amount.Currency)
+    let credit = amount + Money(Amount.create 1M, amount.Currency)
+    let account = Account.createWithCredit clock "Account" balance credit
+    let target = DebitTarget "Target"
+    isDebitSuccessful account target amount
