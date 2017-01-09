@@ -26,9 +26,10 @@ let query q (state : State) =
     | Query.LastWeek -> Clocks.machineClock |> Dates.lastWeek |> showTransactions
     Success state
 
-let addAccount name amount (state : State) =
+let addAccount name amount credit (state : State) =
     let balance = Money(amount, USD)
-    Account.create Clocks.machineClock name balance
+    Money(credit, USD)
+    |> Account.createWithCredit Clocks.machineClock name balance
     |> state.addAccount
     |> Success
 
@@ -74,6 +75,12 @@ let debit amount source dest clock (state : State) =
             |> fun s -> s.replaceAccount (Transaction.getSourceAccount transaction)
     }
 
+let help (state : State) =
+    result {
+        let! _ = tryCatch Help.displayText ()
+        return state
+    }
+
 let exit (state : State) =
     result {
         let! _ = Storage.saveState state
@@ -83,11 +90,12 @@ let exit (state : State) =
 let fromCommand (command : Command) : Service =
     match command with
     | Show q -> query q
-    | AddAccount (name, amount) -> addAccount name amount
+    | AddAccount (name, amount, credit) -> addAccount name amount credit
     | Command.Transfer (amount, On clock, From source, To dest) ->
         transfer amount source dest clock
     | Command.Credit (amount, On clock, From source, To dest) ->
         credit amount source dest clock
     | Command.Debit (amount, On clock, From source, To dest) ->
         debit amount source dest clock
+    | Help -> help
     | Exit -> exit

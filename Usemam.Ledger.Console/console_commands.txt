@@ -3,8 +3,9 @@ show accounts
 show today
 show last week
 
--- add account <name> <starting balance>
+-- add account
 add account "Cash" 120.0
+add account "Credit" 100.0 credit 500.0
 
 -- transactions
 transfer 10.0 from "Checking" to "Savings"
@@ -13,3 +14,6 @@ debit 30.0 from "Cash" to "Gas"
 
 -- save and close
 exit
+
+-- display current help
+help

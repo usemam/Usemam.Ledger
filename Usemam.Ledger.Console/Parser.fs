@@ -106,14 +106,26 @@ let show str =
     }
 
 let addAccount str =
+    let noCredit s =
+        result {
+            let! _ = fin s
+            return Amount.zero
+        }
+    let someCredit s =
+        result {
+            let! _, maybeAmount = all [space; reserved "credit"; space] s
+            let! amount, rest = amount maybeAmount
+            let! _ = fin rest
+            return amount
+        }
     result {
         let! _, afterCommand = reserved "add account" str
         let! _, afterSpace1 = space afterCommand
         let! name, afterName = matchString afterSpace1
         let! _, afterSpace2 = space afterName
         let! amount, rest = amount afterSpace2
-        let! _ = fin rest
-        return AddAccount (name, amount)
+        let! credit = any [ noCredit; someCredit ] rest
+        return AddAccount (name, amount, credit)
     }
 
 let details str =
@@ -191,5 +203,12 @@ let debit str =
         return Command.Debit (amount, on, from, t0)
     }
 
+let help str =
+    result {
+        let! _, rest = reserved "help" str
+        let! _ = fin rest
+        return Help
+    }
+
 let parse  =
-    any [ exit; show; addAccount; transfer; credit; debit ]
+    any [ exit; help; show; addAccount; transfer; credit; debit ]

@@ -17,10 +17,11 @@ type Query =
 
 type Command =
     | Show of Query
-    | AddAccount of string * AmountType
+    | AddAccount of string * AmountType * AmountType
     | Transfer of AmountType * On * From * To
     | Credit of AmountType * On * From * To
     | Debit of AmountType * On * From * To
+    | Help
     | Exit
 
 let isExit command =

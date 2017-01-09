@@ -59,10 +59,12 @@
     <Compile Include="Command.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Storage.fs" />
+    <Compile Include="Help.fs" />
     <Compile Include="Services.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
+    <EmbeddedResource Include="console_commands.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
