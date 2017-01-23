@@ -12,8 +12,7 @@ type On = On of (unit -> DateTimeOffset)
 
 type Query =
     | Accounts
-    | Today
-    | LastWeek
+    | LastN of int
 
 type Command =
     | Show of Query

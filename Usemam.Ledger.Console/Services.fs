@@ -1,11 +1,6 @@
 ﻿module Usemam.Ledger.Console.Services
 
-open System
-
-open Usemam.Ledger.Console.ColorPrint
 open Usemam.Ledger.Console.Command
-open Usemam.Ledger.Console.Parser
-
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 
@@ -14,16 +9,16 @@ let query q (state : State) =
         state.accounts
         |> Seq.iteri (fun i a -> printfn "%i. %O" (i+1) a)
     
-    let showTransactions period =
-        let min, max = Dates.BoundariesIn period
-        state.transactions.between min max
+    let showTransactions n  =
+        let total = state.transactions |> Seq.length
+        state.transactions
         |> Seq.sortBy (fun t -> t.Date)
+        |> Seq.take (min n total)
         |> Seq.iteri (fun i t -> printfn "%i. %O" (i+1) t)
 
     match q with
     | Accounts -> showAccounts ()
-    | Today -> Clocks.machineClock |> Dates.today |> showTransactions
-    | Query.LastWeek -> Clocks.machineClock |> Dates.lastWeek |> showTransactions
+    | LastN n -> showTransactions n
     Success state
 
 let addAccount name amount credit (state : State) =

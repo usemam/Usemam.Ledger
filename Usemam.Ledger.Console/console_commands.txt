@@ -1,11 +1,10 @@
 -- inquiries
-show accounts
-show today
-show last week
+show accounts - show current state of all accounts
+show last 10 - show last 10 transactions; 10 can be replaced with any integer
 
 -- add account
-add account "Cash" 120.0
-add account "Credit" 100.0 credit 500.0
+add account "Cash" 120.0 - add account with alias "Cash" and initial balance of $120
+add account "Credit" 100.0 credit 500.0 - add account with alias "Credit", initial balance of $100 and credit limit of $500
 
 -- transactions
 transfer 10.0 from "Checking" to "Savings"

@@ -76,6 +76,13 @@ let matchString str =
         return (maybeString, rest)
     }
 
+let matchCount str =
+    result {
+        let maybeNumber, rest = word str ' '
+        let! count = Result.tryCatch Int32.Parse maybeNumber
+        return (count, rest)
+    }
+
 let exit str =
     result {
         let! _ = all [reserved "exit"; fin] str
@@ -88,20 +95,17 @@ let show str =
             let! _ = all [reserved "accounts"; fin] str
             return Accounts
         }
-    let matchToday str =
+    let matchLastN str =
         result {
-            let! _ = all [reserved "today"; fin] str
-            return Today
-        }
-    let matchLastWeek str =
-        result {
-            let! _ = all [reserved "last week"; fin] str
-            return LastWeek
+            let! _, beforeN = all [reserved "last"; space] str
+            let! n, rest = matchCount beforeN
+            let! _ = fin rest
+            return LastN n
         }
     result {
         let! _, rest = all [reserved "show"; space] str
         let! query =
-            any [ matchAccounts; matchToday; matchLastWeek ] rest
+            any [ matchAccounts; matchLastN ] rest
         return Show query
     }
 
