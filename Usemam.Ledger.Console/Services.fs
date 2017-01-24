@@ -3,23 +3,30 @@
 open Usemam.Ledger.Console.Command
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
+open Usemam.Ledger.Domain.Queries
 
 let query q (state : State) =
     let showAccounts () =
-        state.accounts
-        |> Seq.iteri (fun i a -> printfn "%i. %O" (i+1) a)
+        result {
+            let queryObj = new GetAllAccounts() :> IQuery<seq<AccountType>>
+            let! queryResult = queryObj.run state
+            return queryResult |> Seq.iteri (fun i a -> printfn "%i. %O" (i+1) a)
+        }
     
     let showTransactions n  =
-        let total = state.transactions |> Seq.length
-        state.transactions
-        |> Seq.sortBy (fun t -> t.Date)
-        |> Seq.take (min n total)
-        |> Seq.iteri (fun i t -> printfn "%i. %O" (i+1) t)
+        result {
+            let queryObj = new GetLastNTransactions(n) :> IQuery<seq<TransactionType>>
+            let! queryResult = queryObj.run state
+            return queryResult |> Seq.iteri (fun i t -> printfn "%i. %O" (i+1) t)
+        }
 
-    match q with
-    | Accounts -> showAccounts ()
-    | LastN n -> showTransactions n
-    Success state
+    result {
+        let! _ =
+            match q with
+            | Accounts -> showAccounts ()
+            | LastN n -> showTransactions n
+        return state
+    }
 
 let addAccount name amount credit (state : State) =
     let balance = Money(amount, USD)
@@ -82,7 +89,7 @@ let exit (state : State) =
         return state
     }
 
-let fromCommand (command : Command) : Service =
+let fromCommand (command : Command) =
     match command with
     | Show q -> query q
     | AddAccount (name, amount, credit) -> addAccount name amount credit

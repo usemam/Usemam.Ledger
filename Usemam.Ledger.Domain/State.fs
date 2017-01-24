@@ -13,4 +13,8 @@ type State(accounts : IAccounts, transactions : ITransactions) =
     member this.addTransaction transaction =
         State(accounts, transactions.add transaction)
 
-type Service = State -> Result<State>
+type IQuery<'T> =
+    abstract run : State -> Result<'T>
+
+type ICommand =
+    abstract run : State -> Result<State>

@@ -50,6 +50,7 @@
     <Compile Include="Account.fs" />
     <Compile Include="Transaction.fs" />
     <Compile Include="State.fs" />
+    <Compile Include="Queries.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
