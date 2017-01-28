@@ -8,14 +8,14 @@ open Usemam.Ledger.Domain.Queries
 let query q (state : State) =
     let showAccounts () =
         result {
-            let queryObj = new GetAllAccounts() :> IQuery<seq<AccountType>>
+            let queryObj = GetAllAccountsQuery () :> IQuery<seq<AccountType>>
             let! queryResult = queryObj.run state
             return queryResult |> Seq.iteri (fun i a -> printfn "%i. %O" (i+1) a)
         }
     
     let showTransactions n  =
         result {
-            let queryObj = new GetLastNTransactions(n) :> IQuery<seq<TransactionType>>
+            let queryObj = GetLastNTransactionsQuery n :> IQuery<seq<TransactionType>>
             let! queryResult = queryObj.run state
             return queryResult |> Seq.iteri (fun i t -> printfn "%i. %O" (i+1) t)
         }
@@ -46,7 +46,7 @@ let transfer amount source dest clock (state : State) =
             Transaction.transferMoney s d money clock
         return
             state
-            |> fun s -> s.addTransaction transaction
+            |> fun s -> s.pushTransaction transaction
             |> fun s -> s.replaceAccount (Transaction.getSourceAccount transaction)
             |> fun s -> s.replaceAccount (Transaction.getDestinationAccount transaction)
     }
@@ -60,7 +60,7 @@ let credit amount source dest clock (state : State) =
         let! transaction = Transaction.putMoney d category money clock
         return
             state
-            |> fun s -> s.addTransaction transaction
+            |> fun s -> s.pushTransaction transaction
             |> fun s -> s.replaceAccount (Transaction.getDestinationAccount transaction)
     }
 
@@ -73,7 +73,7 @@ let debit amount source dest clock (state : State) =
         let! transaction = Transaction.spendMoney a category money clock
         return
             state
-            |> fun s -> s.addTransaction transaction
+            |> fun s -> s.pushTransaction transaction
             |> fun s -> s.replaceAccount (Transaction.getSourceAccount transaction)
     }
 

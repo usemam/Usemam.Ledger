@@ -10,11 +10,16 @@ type State(accounts : IAccounts, transactions : ITransactions) =
         State(accounts.add account, transactions)
     member this.replaceAccount account =
         State(accounts.replace account, transactions)
-    member this.addTransaction transaction =
-        State(accounts, transactions.add transaction)
+    member this.removeAccount account =
+        State(accounts.remove account, transactions)
+    member this.pushTransaction transaction =
+        State(accounts, transactions.push transaction)
+    member this.popTransaction () =
+        State(accounts, transactions.pop ())
 
 type IQuery<'T> =
     abstract run : State -> Result<'T>
 
 type ICommand =
     abstract run : State -> Result<State>
+    abstract rollback : State -> Result<State>

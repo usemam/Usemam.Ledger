@@ -36,18 +36,22 @@ module Transaction =
     type ITransactions =
         inherit seq<TransactionType>
         abstract between : DateTimeOffset -> DateTimeOffset -> seq<TransactionType>
-        abstract add : TransactionType -> ITransactions
+        abstract push : TransactionType -> ITransactions
+        abstract pop : unit -> ITransactions
 
-    type TransactionsInMemory(transactions : seq<TransactionType>) =
+    type TransactionsInMemory(transactions : TransactionType list) =
         interface ITransactions with
-            member this.GetEnumerator() = transactions.GetEnumerator()
+            member this.GetEnumerator() = (transactions :> seq<TransactionType>).GetEnumerator()
             member this.GetEnumerator() =
                 (this :> seq<TransactionType>).GetEnumerator() :> System.Collections.IEnumerator
             member this.between min max =
                 transactions
                 |> Seq.filter (fun t -> min <= t.Date && t.Date <= max)
-            member this.add transaction =
-                TransactionsInMemory(transactions |> Seq.append [transaction])
+            member this.push transaction =
+                TransactionsInMemory(transaction :: transactions)
+                :> ITransactions
+            member this.pop () = 
+                TransactionsInMemory(transactions.Tail)
                 :> ITransactions
 
     let create clock amount description =
