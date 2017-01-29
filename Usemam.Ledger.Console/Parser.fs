@@ -209,10 +209,21 @@ let debit str =
 
 let help str =
     result {
-        let! _, rest = reserved "help" str
-        let! _ = fin rest
+        let! _ = all [reserved "help"; fin] str
         return Help
     }
 
+let undo str =
+    result {
+        let! _ = all [reserved "undo"; fin] str
+        return Undo
+    }
+
+let redo str =
+    result {
+        let! _ = all [reserved "redo"; fin] str
+        return Redo
+    }
+
 let parse  =
-    any [ exit; help; show; addAccount; transfer; credit; debit ]
+    any [ exit; help; show; addAccount; transfer; credit; debit; undo; redo; ]

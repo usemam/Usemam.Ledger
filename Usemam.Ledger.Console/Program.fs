@@ -18,25 +18,24 @@ let main _ =
 
     let appState = loadState()
     
-    let rec innerLoop run s =
-        match run s with
-        | Success (repeat, s') ->
-            if repeat then innerLoop run s'
+    let rec readCommandAndRunService stateResult =
+        let currentResult =
+            result {
+                let! state = stateResult
+                cprintf ConsoleColor.Yellow "> "
+                let input = System.Console.In.ReadLine()
+                let! command = parse input
+                let service = fromCommand command
+                let! newState = service state
+                return (not << isExit) command, newState
+            }
+        match currentResult with
+        | Success (repeat, state) ->
+            if repeat then readCommandAndRunService (Success state)
         | Failure message ->
             error message
-            innerLoop run s
+            readCommandAndRunService stateResult
 
-    let readCommandAndRunService stateResult =
-        result {
-            let! state = stateResult
-            cprintf ConsoleColor.Yellow "> "
-            let input = System.Console.In.ReadLine()
-            let! command = parse input
-            let service = fromCommand command
-            let newState = service state
-            return (not << isExit) command, newState
-        }
-
-    innerLoop readCommandAndRunService appState
+    readCommandAndRunService appState
         
     0 // return an integer exit code
