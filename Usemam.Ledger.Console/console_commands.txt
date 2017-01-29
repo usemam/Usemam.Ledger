@@ -11,6 +11,10 @@ transfer 10.0 from "Checking" to "Savings"
 credit 50.0 from "Salary" to "Checking"
 debit 30.0 from "Cash" to "Gas"
 
+-- editing (only for 'add account', 'transfer', 'credit' or 'debit' commands)
+undo - cancel effect of last command
+redo - apply previously cancelled command again
+
 -- save and close
 exit
 
