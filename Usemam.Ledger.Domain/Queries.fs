@@ -12,8 +12,9 @@ type GetLastNTransactionsQuery(n : int) =
     interface IQuery<seq<TransactionType>> with
         member this.run state =
             result {
+                let now = Clocks.machineClock ()
                 let! total = tryCatch (fun x -> x |> Seq.length) state.transactions
                 return state.transactions
-                    |> Seq.sortBy (fun t -> t.Date)
+                    |> Seq.sortBy (fun t -> now - t.Date)
                     |> Seq.take (min n total)
             }

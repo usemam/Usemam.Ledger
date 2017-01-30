@@ -47,6 +47,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Clocks.fs" />
     <Compile Include="Result.fs" />
+    <Compile Include="Money.fs" />
     <Compile Include="Account.fs" />
     <Compile Include="Transaction.fs" />
     <Compile Include="State.fs" />

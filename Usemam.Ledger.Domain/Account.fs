@@ -2,76 +2,6 @@
 
 open System
 
-type Currency = USD
-
-module Constants =
-    
-    let minAmount = 0.01M
-
-type AmountType =
-    { Value : decimal }
-    static member (+) (a1 : AmountType, a2 : AmountType) =
-        { Value = (a1.Value + a2.Value) }
-    static member (-) (a1 : AmountType, a2 : AmountType) =
-        match (a1.Value - a2.Value), a1.Value = a2.Value with
-        | _, true -> { Value = 0M }
-        | rest, false when Math.Abs(rest) >= Constants.minAmount -> { Value = rest }
-        | _ ->
-            sprintf "Result amount cannot be less than %O." Constants.minAmount
-            |> InvalidOperationException
-            |> raise
-
-module Amount =
-
-    let tryCreate (d : decimal) =
-        if d = 0M || Math.Abs(d) >= Constants.minAmount
-        then Some { Value = d }
-        else None
-
-    let create (d : decimal) =
-        match tryCreate d with
-        | Some a -> a
-        | None ->
-            sprintf "Cannot create Amount with value %O." d
-            |> InvalidOperationException
-            |> raise
-
-    let tryParse (s : string) =
-        let (isParseSuccessful, d) = System.Decimal.TryParse(s)
-        match isParseSuccessful with
-        | true -> tryCreate d
-        | false -> None
-
-    let zero = create 0M
-
-type Money(amount : AmountType, currency : Currency) =
-    member this.Amount = amount
-    member this.Currency = currency
-
-    override this.ToString() =
-        sprintf "%O %A" amount.Value currency
-    override this.Equals (x : obj) =
-        match x with
-        | :? Money as other -> other.Amount.Value = amount.Value && other.Currency = currency
-        | _ -> false
-    override this.GetHashCode() =
-        amount.Value.GetHashCode() &&& currency.GetHashCode()
-
-    interface IComparable with
-        member this.CompareTo(obj: obj) = 
-            match obj with
-            | :? Money as other ->
-                amount.Value.CompareTo other.Amount.Value 
-            | _ ->
-                sprintf "Cannot perform comparison with %O." obj
-                |> InvalidOperationException
-                |> raise
-
-    static member (+) (m1 : Money, m2 : Money) =
-        Money(m1.Amount + m2.Amount, m1.Currency)
-    static member (-) (m1 : Money, m2 : Money) =
-        Money(m1.Amount - m2.Amount, m1.Currency)
-
 type AccountType =
     {
         Name : string
@@ -110,6 +40,49 @@ module Account =
             Balance = f(account.Balance)
         }
 
+    let buildAccountNameMap (accounts : seq<AccountType>) =
+        let getPrefixes (word : string) =
+            Seq.unfold (
+                fun i ->
+                    if i > word.Length
+                    then None
+                    else Some(word.Substring(0, i), i + 1)
+               ) 1
+        let foldBack (prefixes : seq<seq<string>>) =
+            let glue (s1 : string) (s2 : string) =
+                if (String.IsNullOrEmpty s1) then s2
+                else if (String.IsNullOrEmpty s2) then s2
+                else s1 + " " + s2
+            
+            Seq.fold (fun acc e ->
+                acc
+                |> Seq.map (fun s ->
+                    e |> Seq.map (fun p -> glue s p))
+                |> Seq.concat
+                ) (Seq.singleton String.Empty) prefixes
+        let buildNameMap (names : seq<string>) =
+            names
+            |> Seq.map (fun name ->
+                let words =
+                    name.Split [|' '|]
+                    |> Seq.filter (fun w -> String.IsNullOrEmpty w |> not)
+                    |> Seq.toArray
+                (name, words))
+            |> Seq.map (fun (name, words) ->
+                let prefixes =
+                    words |> Seq.map (fun w -> w |> getPrefixes)
+                let combinations = foldBack prefixes
+                combinations |> Seq.map (fun c -> (c, name)))
+            |> Seq.concat
+            |> Seq.groupBy (fun (c, _) -> c)
+            |> Seq.filter (fun (_, g) -> Seq.length g = 1)
+            |> Seq.map (fun (_, g) -> g)
+            |> Seq.concat
+            |> Map.ofSeq
+        accounts
+        |> Seq.map (fun a -> a.Name)
+        |> buildNameMap
+
     type IAccounts =
         inherit seq<AccountType>
         abstract getByName : string -> option<AccountType>
@@ -117,7 +90,7 @@ module Account =
         abstract replace : AccountType -> IAccounts
         abstract remove : AccountType -> IAccounts
 
-    type AccountsInMemory(accounts : seq<AccountType>) =
+    type AccountsInMemory(accounts : seq<AccountType>, nameMap : Map<string, string>) =
         interface IAccounts with
             member this.GetEnumerator() = accounts.GetEnumerator()
             member this.GetEnumerator() =
@@ -126,11 +99,15 @@ module Account =
                 accounts
                 |> Seq.tryFind (fun a -> a.Name.ToLower() = name.ToLower())
             member this.add account =
-                AccountsInMemory(accounts |> Seq.append [account])
+                let newAccounts = accounts |> Seq.append [account]
+                AccountsInMemory(newAccounts, buildAccountNameMap newAccounts)
                 :> IAccounts
             member this.replace account =
-                AccountsInMemory(accounts |> Seq.filter (fun a -> a.Name <> account.Name) |> Seq.append [account])
+                AccountsInMemory(
+                    accounts |> Seq.filter (fun a -> a.Name <> account.Name) |> Seq.append [account],
+                    nameMap)
                 :> IAccounts
             member this.remove account =
-                AccountsInMemory(accounts |> Seq.filter (fun a -> a.Name <> account.Name))
+                let newAccounts = accounts |> Seq.filter (fun a -> a.Name <> account.Name)
+                AccountsInMemory(newAccounts, buildAccountNameMap newAccounts)
                 :> IAccounts
