@@ -57,6 +57,7 @@
     <Compile Include="MoneyProperties.fs" />
     <Compile Include="TransferProperties.fs" />
     <Compile Include="DebitProperties.fs" />
+    <Compile Include="UniqueNamePrefixMapTests.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
