@@ -17,7 +17,7 @@ type TransactionDescription =
     override this.ToString() =
         match this with
         | Transfer (a1, a2) -> sprintf "transferred from %s to %s" a1.Name a2.Name
-        | Credit (a, s) -> sprintf "credited from %s to %O" a.Name s
+        | Credit (a, s) -> sprintf "credited from %O to %s" s a.Name
         | Debit (a, t) -> sprintf "spent from %s on %O" a.Name t
 
 open System
