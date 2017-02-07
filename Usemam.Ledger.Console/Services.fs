@@ -21,11 +21,22 @@ let query q (tracker : CommandTracker) =
             return queryResult |> Seq.iteri (fun i t -> printfn "%i. %O" (i+1) t)
         }
 
+    let showTotals min max =
+        result {
+            let queryObj = GetTotalsQuery (min, max) :> IQuery<Map<string, Money>>
+            let! queryResult = queryObj.run tracker.state
+            return
+                queryResult
+                |> Seq.sortBy (fun x -> x.Key)
+                |> Seq.iteri (fun i x -> printfn "%i. %s - %O" (i+1) x.Key x.Value)
+        }
+
     result {
         let! _ =
             match q with
             | Accounts -> showAccounts ()
             | LastN n -> showTransactions n
+            | Total (min, max) -> showTotals min max
         return tracker
     }
 

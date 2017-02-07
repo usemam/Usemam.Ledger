@@ -102,10 +102,35 @@ let show str =
             let! _ = fin rest
             return LastN n
         }
+    let total str =
+        result {
+            let matchTotal str =
+                result {
+                    let! _ = all [reserved "total"; fin] str
+                    return (Clocks.start(), Clocks.machineClock())
+                }
+            let matchTotalWithDates str =
+                let date str =
+                    result {
+                        let maybeDate, rest = word str ' '
+                        let! date = tryCatch DateTimeOffset.Parse maybeDate
+                        return (date, rest)
+                    }
+                result {
+                    let! _, beforeMin = all [reserved "total"; space] str
+                    let! min, afterMin = date beforeMin
+                    let! _, beforeMax = all [space; reserved "to"; space] afterMin
+                    let! max, afterMax = date beforeMax
+                    let! _ = fin afterMax
+                    return (min, max)
+                }
+            let! timeFrame = any [matchTotal; matchTotalWithDates] str
+            return Total timeFrame
+        }
     result {
         let! _, rest = all [reserved "show"; space] str
         let! query =
-            any [ matchAccounts; matchLastN ] rest
+            any [ matchAccounts; matchLastN; total ] rest
         return Show query
     }
 

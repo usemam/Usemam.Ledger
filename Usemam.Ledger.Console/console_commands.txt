@@ -1,6 +1,8 @@
 -- inquiries
 show accounts - show current state of all accounts
 show last 10 - show last 10 transactions; 10 can be replaced with any integer
+show total - show total amounts by categories
+show total 1/1/2017 to 2/1/2017 - show total amounts by categories starting from 1/1/2017 and until 2/1/2017
 
 -- add account
 add account "Cash" 120.0 - add account with alias "Cash" and initial balance of $120
@@ -10,6 +12,7 @@ add account "Credit" 100.0 credit 500.0 - add account with alias "Credit", initi
 transfer 10.0 from "Checking" to "Savings"
 credit 50.0 from "Salary" to "Checking"
 debit 30.0 from "Cash" to "Gas"
+debit 10.5 on 1/10/2017 from "Checking" to "Lunch" - add transaction's date using "on"
 
 -- editing (only for 'add account', 'transfer', 'credit' or 'debit' commands)
 undo - cancel effect of last command
