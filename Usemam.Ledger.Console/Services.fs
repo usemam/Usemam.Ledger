@@ -27,7 +27,7 @@ let query q (tracker : CommandTracker) =
             let! queryResult = queryObj.run tracker.state
             return
                 queryResult
-                |> Seq.sortBy (fun x -> x.Key)
+                |> Seq.sortBy (fun x -> x.Value)
                 |> Seq.iteri (fun i x -> printfn "%i. %s - %O" (i+1) x.Key x.Value)
         }
 
