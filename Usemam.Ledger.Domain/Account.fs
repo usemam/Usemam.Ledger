@@ -40,11 +40,6 @@ module Account =
             Balance = f(account.Balance)
         }
 
-    let buildAccountNameMap (accounts : seq<AccountType>) =
-        accounts
-        |> Seq.map (fun a -> a.Name.ToLower())
-        |> UniqueNamePrefixMap.build
-
     type IAccounts =
         inherit seq<AccountType>
         abstract getByName : string -> option<AccountType>
@@ -52,26 +47,24 @@ module Account =
         abstract replace : AccountType -> IAccounts
         abstract remove : AccountType -> IAccounts
 
-    type AccountsInMemory(accounts : seq<AccountType>, nameMap : Map<string, string>) =
+    type AccountsInMemory(accounts : seq<AccountType>) =
         interface IAccounts with
             member this.GetEnumerator() = accounts.GetEnumerator()
             member this.GetEnumerator() =
                 (this :> seq<AccountType>).GetEnumerator() :> System.Collections.IEnumerator
             member this.getByName name =
-                match name.ToLower() |> nameMap.TryFind with
-                | None -> None
-                | Some accountName ->
-                    accounts |> Seq.tryFind (fun a -> a.Name.ToLower() = accountName)
+                accounts
+                |> Seq.tryFind (fun a ->
+                    name.ToLowerInvariant()
+                    |> a.Name.ToLowerInvariant().StartsWith)
             member this.add account =
                 let newAccounts = accounts |> Seq.append [account]
-                AccountsInMemory(newAccounts, buildAccountNameMap newAccounts)
-                :> IAccounts
+                AccountsInMemory(newAccounts) :> IAccounts
             member this.replace account =
                 AccountsInMemory(
-                    accounts |> Seq.filter (fun a -> a.Name <> account.Name) |> Seq.append [account],
-                    nameMap)
+                    accounts |> Seq.filter (fun a -> a.Name <> account.Name) |> Seq.append [account])
                 :> IAccounts
             member this.remove account =
                 let newAccounts = accounts |> Seq.filter (fun a -> a.Name <> account.Name)
-                AccountsInMemory(newAccounts, buildAccountNameMap newAccounts)
+                AccountsInMemory(newAccounts)
                 :> IAccounts

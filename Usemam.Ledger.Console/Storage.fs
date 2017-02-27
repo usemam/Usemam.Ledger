@@ -32,7 +32,7 @@ let loadState () =
         let! transactions = tryCatch deserialize<TransactionType list> transactionsJson
         let state =
             State(
-                Account.AccountsInMemory(accounts, Account.buildAccountNameMap accounts),
+                Account.AccountsInMemory(accounts),
                 Transaction.TransactionsInMemory transactions)
         return CommandTracker(state, [], [])
     }
