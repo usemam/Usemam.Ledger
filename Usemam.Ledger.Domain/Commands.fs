@@ -20,6 +20,28 @@ type AddAccountCommand(name, amount, credit) =
                 return state.removeAccount account
             }
 
+type SetCreditLimitCommand(name, amount) =
+    let mutable oldLimit : Money = Money(Amount.create 0M, USD)
+    interface ICommand with
+        member this.run state =
+            let newLimit = Money(amount, USD)
+            let account = state.accounts.getByName name
+            result {
+                let! a = fromOption (sprintf "Can't find account '%s'" name) account
+                oldLimit <- a.Credit
+                let newAccount = Account.setCreditLimit a newLimit
+                return
+                    state |> fun s -> s.replaceAccount newAccount
+            }
+        member this.rollback state =
+            let account = state.accounts.getByName name
+            result {
+                let! a = fromOption (sprintf "Can't find account '%s'" name) account
+                let oldAccount = Account.setCreditLimit a oldLimit
+                return
+                    state |> fun s -> s.replaceAccount oldAccount
+            }
+
 type TransferCommand(amount, source, dest, clock) =
     interface ICommand with
         member this.run state =

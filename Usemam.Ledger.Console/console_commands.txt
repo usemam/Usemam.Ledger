@@ -4,9 +4,10 @@ show last 10 - show last 10 transactions; 10 can be replaced with any integer
 show total - show total amounts by categories
 show total 1/1/2017 to 2/1/2017 - show total amounts by categories starting from 1/1/2017 and until 2/1/2017
 
--- add account
+-- account manipulation
 add account "Cash" 120.0 - add account with alias "Cash" and initial balance of $120
 add account "Credit" 100.0 credit 500.0 - add account with alias "Credit", initial balance of $100 and credit limit of $500
+set account "Credit" credit 800.0 - set "Credit" account's credit limit to $800
 
 -- transactions
 transfer 10.0 from "Checking" to "Savings"

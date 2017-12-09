@@ -134,27 +134,35 @@ let show str =
         return Show query
     }
 
+let someCredit s =
+    result {
+        let! _, maybeAmount = all [space; reserved "credit"; space] s
+        let! amount, rest = amount maybeAmount
+        let! _ = fin rest
+        return amount
+    }
+
 let addAccount str =
     let noCredit s =
         result {
             let! _ = fin s
             return Amount.zero
         }
-    let someCredit s =
-        result {
-            let! _, maybeAmount = all [space; reserved "credit"; space] s
-            let! amount, rest = amount maybeAmount
-            let! _ = fin rest
-            return amount
-        }
     result {
-        let! _, afterCommand = reserved "add account" str
-        let! _, afterSpace1 = space afterCommand
-        let! name, afterName = matchString afterSpace1
-        let! _, afterSpace2 = space afterName
-        let! amount, rest = amount afterSpace2
+        let! _, maybeName = all [reserved "add account"; space] str
+        let! name, afterName = matchString maybeName
+        let! _, maybeAmount = space afterName
+        let! amount, rest = amount maybeAmount
         let! credit = any [ noCredit; someCredit ] rest
         return AddAccount (name, amount, credit)
+    }
+
+let setCreditLimit str =
+    result {
+        let! _, maybeName = all [reserved "set account"; space] str
+        let! name, afterName = matchString maybeName
+        let! credit = someCredit afterName
+        return SetCreditLimit(name, credit)
     }
 
 let details str =
@@ -251,4 +259,4 @@ let redo str =
     }
 
 let parse  =
-    any [ exit; help; show; addAccount; transfer; credit; debit; undo; redo; ]
+    any [ exit; help; show; addAccount; setCreditLimit; transfer; credit; debit; undo; redo; ]

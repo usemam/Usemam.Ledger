@@ -18,6 +18,7 @@ type Query =
 type Command =
     | Show of Query
     | AddAccount of string * AmountType * AmountType
+    | SetCreditLimit of string * AmountType
     | Transfer of AmountType * On * From * To
     | Credit of AmountType * On * From * To
     | Debit of AmountType * On * From * To

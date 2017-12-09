@@ -39,6 +39,14 @@ module Account =
             Credit = account.Credit
             Balance = f(account.Balance)
         }
+    
+    let setCreditLimit account credit =
+        {
+            Name = account.Name
+            Created = account.Created
+            Balance = account.Balance
+            Credit = credit
+        }
 
     type IAccounts =
         inherit seq<AccountType>
