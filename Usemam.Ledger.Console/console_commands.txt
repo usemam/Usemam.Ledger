@@ -1,6 +1,7 @@
 -- inquiries
 show accounts - show current state of all accounts
-show last 10 - show last 10 transactions; 10 can be replaced with any integer
+show last <n> - show last transactions for all accounts; n - number of transactions to show
+show last <n> for "Cash" - show last transactions for "Cash" account; n - number of transactions to show
 show total - show total amounts by categories
 show total 1/1/2017 to 2/1/2017 - show total amounts by categories starting from 1/1/2017 and until 2/1/2017
 
@@ -15,7 +16,7 @@ credit 50.0 from "Salary" to "Checking"
 debit 30.0 from "Cash" to "Gas"
 debit 10.5 on 1/10/2017 from "Checking" to "Lunch" - add transaction's date using "on"
 
--- editing (only for 'add account', 'transfer', 'credit' or 'debit' commands)
+-- editing (for account manipulation and transaction commands)
 undo - cancel effect of last command
 redo - apply previously cancelled command again
 

@@ -96,11 +96,18 @@ let show str =
             return Accounts
         }
     let matchLastN str =
+        let matchForAccount str =
+            result {
+                let! _, maybeName = all [space; reserved "for"; space] str
+                let! name, rest = matchString maybeName
+                let! _ = fin rest
+                return name, empty
+            }
         result {
             let! _, beforeN = all [reserved "last"; space] str
             let! n, rest = matchCount beforeN
-            let! _ = fin rest
-            return LastN n
+            let! name, _ = any [fin; matchForAccount] rest
+            return LastN(n, name)
         }
     let total str =
         result {

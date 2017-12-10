@@ -12,7 +12,7 @@ type On = On of (unit -> DateTimeOffset)
 
 type Query =
     | Accounts
-    | LastN of int
+    | LastN of int * string
     | Total of DateTimeOffset * DateTimeOffset
 
 type Command =

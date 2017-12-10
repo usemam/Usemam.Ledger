@@ -17,6 +17,9 @@ type AccountType =
         | false ->
             sprintf "Account '%O' doesn't have sufficient funds." this
             |> Failure
+    member this.matchName str =
+        (String.IsNullOrEmpty str |> not) &&
+        str.ToLowerInvariant() |> this.Name.ToLowerInvariant().StartsWith
 
 module Account =
 
@@ -62,9 +65,7 @@ module Account =
                 (this :> seq<AccountType>).GetEnumerator() :> System.Collections.IEnumerator
             member this.getByName name =
                 accounts
-                |> Seq.tryFind (fun a ->
-                    name.ToLowerInvariant()
-                    |> a.Name.ToLowerInvariant().StartsWith)
+                |> Seq.tryFind (fun a -> a.matchName name)
             member this.add account =
                 let newAccounts = accounts |> Seq.append [account]
                 AccountsInMemory(newAccounts) :> IAccounts

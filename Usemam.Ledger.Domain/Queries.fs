@@ -10,14 +10,21 @@ type GetAllAccountsQuery() =
         member this.run state =
             tryCatch (fun x -> x :> seq<AccountType>) state.accounts
 
-type GetLastNTransactionsQuery(n : int) =
+type GetLastNTransactionsQuery(n : int, accountName : string) =
     interface IQuery<seq<TransactionType>> with
         member this.run state =
+            let matchAccount t =
+                String.IsNullOrEmpty accountName ||
+                match t.Description with
+                | Credit (account, _) -> account.matchName accountName
+                | Debit (account, _) -> account.matchName accountName
+                | Transfer (source, dest) -> source.matchName accountName || dest.matchName accountName
             result {
                 let now = Clocks.machineClock ()
-                let! total = tryCatch (fun x -> x |> Seq.length) state.transactions
+                let! total = tryCatch (fun x -> x |> Seq.filter matchAccount |> Seq.length) state.transactions
                 return state.transactions
                     |> Seq.sortBy (fun t -> now - t.Date)
+                    |> Seq.filter matchAccount
                     |> Seq.take (min n total)
             }
 
