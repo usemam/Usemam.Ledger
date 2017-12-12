@@ -1,0 +1,10 @@
+source https://api.nuget.org/v3/index.json
+
+nuget FsCheck 2.6.2 restriction: >= net452
+nuget FsCheck.Xunit 2.6.2 restriction: >= net452
+nuget FSharp.Core 3.1.2.5 restriction: >= net452
+nuget Newtonsoft.Json 9.0.1 restriction: >= net452
+nuget xunit.abstractions 2.0.0 restriction: >= net452
+nuget xunit.assert 2.1.0 restriction: >= net451
+nuget xunit.extensibility.core 2.1.0 restriction: >= net452
+nuget xunit.extensibility.execution 2.1.0 restriction: >= net452

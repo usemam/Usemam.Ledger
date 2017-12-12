@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{D6CC1361-0DF5-4C7A-B83C-83D09032AEF9}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Domain", "Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj", "{58470CD9-2DF7-4560-9B84-E09F3029D52C}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Domain.Tests", "Usemam.Ledger.Domain.Tests\Usemam.Ledger.Domain.Tests.fsproj", "{00A9B1C7-A3DC-44A9-A89D-804F4B69C858}"
