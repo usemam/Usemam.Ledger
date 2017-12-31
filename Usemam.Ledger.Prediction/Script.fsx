@@ -1,8 +1,11 @@
-﻿// Learn more about F# at http://fsharp.org. See the 'F# Tutorial' project
-// for more guidance on F# programming.
+﻿
+#r "../packages/Newtonsoft.Json/lib/net45/Newtonsoft.Json.dll"
+#r "../packages/FSharp.Data/lib/net45/FSharp.Data.dll"
+#r "bin/Debug/Usemam.Ledger.Domain.dll"
 
-#load "Library1.fs"
+#load "Data.fs"
+
 open Usemam.Ledger.Prediction
 
-// Define your library scripting code here
-
+let transactions = Data.loadTransactions "D:\\tmp\\transactions.db"
+Data.transformAndSaveToCsv transactions "D:\\tmp\\data.csv"
