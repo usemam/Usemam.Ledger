@@ -1,4 +1,4 @@
-﻿namespace Usemam.Ledger.Prediction.AssemblyInfo
+﻿namespace Usemam.Ledger.Learning.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -7,11 +7,11 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("Usemam.Ledger.Prediction")>]
+[<assembly: AssemblyTitle("Usemam.Ledger.Learning")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("Usemam.Ledger.Prediction")>]
+[<assembly: AssemblyProduct("Usemam.Ledger.Learning")>]
 [<assembly: AssemblyCopyright("Copyright ©  2017")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]

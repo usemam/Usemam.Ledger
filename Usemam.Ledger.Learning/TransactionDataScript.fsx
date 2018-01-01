@@ -5,7 +5,7 @@
 
 #load "Data.fs"
 
-open Usemam.Ledger.Prediction
+open Usemam.Ledger.Learning
 
-let transactions = Data.loadTransactions "D:\\tmp\\transactions.db"
-Data.transformAndSaveToCsv transactions "D:\\tmp\\data.csv"
+let transactions = TransactionData.loadTransactions "D:\\tmp\\transactions.db"
+TransactionData.transformAndSaveToCsv transactions "D:\\tmp\\data.csv"

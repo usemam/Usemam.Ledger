@@ -1,4 +1,4 @@
-﻿module Usemam.Ledger.Prediction.Data
+﻿module Usemam.Ledger.Learning.TransactionData
 
 open System.IO
 

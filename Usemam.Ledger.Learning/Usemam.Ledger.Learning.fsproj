@@ -8,10 +8,10 @@
     <ProjectGuid>9195a787-2ad8-4580-9c96-5d66453edc88</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Usemam.Ledger.Prediction</RootNamespace>
-    <AssemblyName>Usemam.Ledger.Prediction</AssemblyName>
+    <AssemblyName>Usemam.Ledger.Learning</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>Usemam.Ledger.Prediction</Name>
+    <Name>Usemam.Ledger.Learning</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,9 +50,9 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <None Include="Script.fsx" />
+    <None Include="TransactionDataScript.fsx" />
     <Content Include="paket.references" />
-    <Compile Include="Data.fs" />
+    <Compile Include="TransactionData.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

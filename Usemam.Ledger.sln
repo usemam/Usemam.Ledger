@@ -14,7 +14,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Domain.Tests"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Console", "Usemam.Ledger.Console\Usemam.Ledger.Console.fsproj", "{06D81337-2E85-41C6-9B52-25C9455DE912}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Prediction", "Usemam.Ledger.Prediction\Usemam.Ledger.Prediction.fsproj", "{9195A787-2AD8-4580-9C96-5D66453EDC88}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Learning", "Usemam.Ledger.Learning\Usemam.Ledger.Learning.fsproj", "{9195A787-2AD8-4580-9C96-5D66453EDC88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
