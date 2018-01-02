@@ -3,7 +3,7 @@
 #r "../packages/FSharp.Data/lib/net45/FSharp.Data.dll"
 #r "bin/Debug/Usemam.Ledger.Domain.dll"
 
-#load "Data.fs"
+#load "TransactionData.fs"
 
 open Usemam.Ledger.Learning
 

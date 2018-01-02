@@ -50,9 +50,11 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <None Include="TransactionDataScript.fsx" />
     <Content Include="paket.references" />
+    <Compile Include="NaiveBayes.fs" />
     <Compile Include="TransactionData.fs" />
+    <None Include="TransactionDataScript.fsx" />
+    <None Include="TransactionClassificationScript.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
