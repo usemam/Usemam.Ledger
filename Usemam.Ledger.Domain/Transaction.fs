@@ -27,6 +27,7 @@ type TransactionType =
         Date : DateTimeOffset
         Sum : Money
         Description : TransactionDescription
+        TextDescription : string option
     }
     override this.ToString() =
         sprintf "%O - %O - %O" this.Date this.Sum this.Description
@@ -59,6 +60,7 @@ module Transaction =
             Date = clock()
             Sum = amount
             Description = description
+            TextDescription = None
         }
 
     let getSourceAccount (transaction : TransactionType) =

@@ -54,6 +54,7 @@
     <Compile Include="NaiveBayes.fs" />
     <Compile Include="TransactionData.fs" />
     <None Include="TransactionDataScript.fsx" />
+    <Compile Include="TransactionClassifier.fs" />
     <None Include="TransactionClassificationScript.fsx" />
   </ItemGroup>
   <ItemGroup>
