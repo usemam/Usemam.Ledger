@@ -16,6 +16,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Console", "Us
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Learning", "Usemam.Ledger.Learning\Usemam.Ledger.Learning.fsproj", "{9195A787-2AD8-4580-9C96-5D66453EDC88}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Backup.Tests", "Usemam.Ledger.Backup.Tests\Usemam.Ledger.Backup.Tests.fsproj", "{6DE97CF5-53E8-4D45-8508-683FF39E93CF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Backup", "Usemam.Ledger.Backup\Usemam.Ledger.Backup.fsproj", "{B6209746-33C2-4666-989B-8443F431D70F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{9195A787-2AD8-4580-9C96-5D66453EDC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9195A787-2AD8-4580-9C96-5D66453EDC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9195A787-2AD8-4580-9C96-5D66453EDC88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DE97CF5-53E8-4D45-8508-683FF39E93CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE97CF5-53E8-4D45-8508-683FF39E93CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE97CF5-53E8-4D45-8508-683FF39E93CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE97CF5-53E8-4D45-8508-683FF39E93CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6209746-33C2-4666-989B-8443F431D70F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6209746-33C2-4666-989B-8443F431D70F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6209746-33C2-4666-989B-8443F431D70F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6209746-33C2-4666-989B-8443F431D70F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,6 +8,8 @@ open Usemam.Ledger.Console.Services
 
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
+open Usemam.Ledger.Console
+open Usemam.Ledger.Backup
 
 [<EntryPoint>]
 let main _ = 
@@ -37,5 +39,11 @@ let main _ =
             readCommandAndRunService stateResult
 
     readCommandAndRunService appState
+
+    let storage = DropboxStorage()
+    match BackupFacade.run storage Clocks.machineClock with
+    | Success _ ->
+        printfn "Database backed up."
+    | Failure message -> printfn "%s" message
         
     0 // return an integer exit code
