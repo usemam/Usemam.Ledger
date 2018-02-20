@@ -1,6 +1,7 @@
 ﻿namespace Usemam.Ledger.Backup
 
 open System
+open System.IO
 
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
@@ -8,6 +9,11 @@ open Usemam.Ledger.Domain.Result
 module BackupFacade =
 
     let private backupFilePrefix = "ledger_bak_"
+
+    let private createBackupFileName (clock : unit -> DateTimeOffset) =
+        let now = clock()
+        let dd, mm, yyyy = now.Day, now.Month, now.Year
+        sprintf "%s%02i%02i%i.zip" backupFilePrefix mm dd yyyy
 
     type private BackupSchedule(storage : IRemoteStorage) =
         member this.isBackupNeeded (clock : unit -> DateTimeOffset) =
@@ -25,12 +31,15 @@ module BackupFacade =
                     |> not
             }
 
-    let run storage clock =
+    let run files storage clock =
         result {
             let schedule = BackupSchedule(storage)
             let! scheduleCheck = schedule.isBackupNeeded clock
             match scheduleCheck with
             | false -> return! Failure "Backup skipped"
             | true ->
-                return ()
+                let workingDir = Environment.CurrentDirectory
+                let backupFilePath = Path.Combine(workingDir, createBackupFileName clock)
+                let! _ = tryCatch (Zip.create backupFilePath) files
+                return! storage.uploadFile backupFilePath 
         }

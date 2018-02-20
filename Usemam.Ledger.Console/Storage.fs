@@ -6,6 +6,7 @@ open Newtonsoft.Json
 
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
+open Usemam.Ledger.Backup
 
 let saveJson fileName json = File.WriteAllText (fileName, json)
 
@@ -36,3 +37,7 @@ let loadState () =
                 Transaction.TransactionsInMemory transactions)
         return CommandTracker(state, [], [])
     }
+
+let backup () =
+    let remoteStorage = new DropboxStorage()
+    BackupFacade.run ["accounts.db";"transactions.db"] remoteStorage Clocks.machineClock

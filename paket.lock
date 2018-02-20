@@ -8,6 +8,7 @@ NUGET
     FSharp.Core (3.1.2.5) - restriction: >= net452
     FSharp.Data (2.4.3) - restriction: >= net452
     Newtonsoft.Json (10.0.3) - restriction: >= net452
+    SharpZipLib (0.86) - restriction: >= net452
     xunit.abstractions (2.0) - restriction: >= net452
     xunit.assert (2.1) - restriction: >= net451
     xunit.extensibility.core (2.1) - restriction: >= net452

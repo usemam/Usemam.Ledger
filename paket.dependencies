@@ -9,3 +9,4 @@ nuget xunit.abstractions 2.0.0 restriction: >= net452
 nuget xunit.assert 2.1.0 restriction: >= net451
 nuget xunit.extensibility.core 2.1.0 restriction: >= net452
 nuget xunit.extensibility.execution 2.1.0 restriction: >= net452
+nuget SharpZipLib 0.86.0 restriction: >= net452

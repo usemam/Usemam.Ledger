@@ -40,10 +40,8 @@ let main _ =
 
     readCommandAndRunService appState
 
-    let storage = DropboxStorage()
-    match BackupFacade.run storage Clocks.machineClock with
-    | Success _ ->
-        printfn "Database backed up."
-    | Failure message -> printfn "%s" message
+    match Storage.backup() with
+    | Success _ -> printfn "%s" "Backup finished"
+    | Failure m -> printfn "%s" m
         
     0 // return an integer exit code
