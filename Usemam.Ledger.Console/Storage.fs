@@ -1,5 +1,6 @@
 ﻿module Usemam.Ledger.Console.Storage
 
+open System.Configuration
 open System.IO
 
 open Newtonsoft.Json
@@ -39,5 +40,5 @@ let loadState () =
     }
 
 let backup () =
-    let remoteStorage = new DropboxStorage()
+    let remoteStorage = new DropboxStorage("DropboxAccessToken" |> ConfigurationManager.AppSettings.Get)
     BackupFacade.run ["accounts.db";"transactions.db"] remoteStorage Clocks.machineClock

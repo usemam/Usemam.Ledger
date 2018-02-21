@@ -1,5 +1,7 @@
 NUGET
   remote: https://api.nuget.org/v3/index.json
+    Dropbox.Api (4.7) - restriction: >= net452
+      Newtonsoft.Json (>= 7.0.1) - restriction: >= portable-net40+win8+wp8+wpa81+sl5
     FsCheck (2.6.2) - restriction: >= net452
       FSharp.Core (>= 3.1.2.5)
     FsCheck.Xunit (2.6.2) - restriction: >= net452
