@@ -48,6 +48,10 @@ let setCreditLimit name amount (tracker : CommandTracker) =
     SetCreditLimitCommand(name, amount)
     |> tracker.run
 
+let closeAccount name (tracker : CommandTracker) =
+    CloseAccountCommand (name)
+    |> tracker.run
+
 let transfer amount source dest clock (tracker : CommandTracker) =
     TransferCommand (amount, source, dest, clock)
     |> tracker.run
@@ -81,6 +85,7 @@ let fromCommand (command : Command) =
     | Show q -> query q
     | AddAccount (name, amount, credit) -> addAccount name amount credit
     | SetCreditLimit (name, amount) -> setCreditLimit name amount
+    | CloseAccount (name) -> closeAccount name
     | Command.Transfer (amount, On clock, From source, To dest) ->
         transfer amount source dest clock
     | Command.Credit (amount, On clock, From source, To dest) ->

@@ -9,6 +9,7 @@ show total 1/1/2017 to 2/1/2017 - show total amounts by categories starting from
 add account "Cash" 120.0 - add account with alias "Cash" and initial balance of $120
 add account "Credit" 100.0 credit 500.0 - add account with alias "Credit", initial balance of $100 and credit limit of $500
 set account "Credit" credit 800.0 - set "Credit" account's credit limit to $800
+close account "Credit" - closes "Credit" account, so it won't show up in an accounts list
 
 -- transactions
 transfer 10.0 from "Checking" to "Savings"

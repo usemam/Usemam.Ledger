@@ -5,6 +5,7 @@ open System
 type AccountType =
     {
         Name : string
+        IsClosed : bool
         Created : DateTimeOffset
         Balance : Money
         Credit : Money
@@ -26,6 +27,7 @@ module Account =
     let createWithCredit clock name balance credit =
         {
             Name = name
+            IsClosed = false
             Balance = balance
             Credit = credit
             Created = clock()
@@ -38,6 +40,7 @@ module Account =
     let map f account =
         {
             Name = account.Name
+            IsClosed = account.IsClosed
             Created = account.Created
             Credit = account.Credit
             Balance = f(account.Balance)
@@ -46,9 +49,19 @@ module Account =
     let setCreditLimit account credit =
         {
             Name = account.Name
+            IsClosed = account.IsClosed
             Created = account.Created
             Balance = account.Balance
             Credit = credit
+        }
+    
+    let setIsClosed account isClosed =
+        {
+            Name = account.Name
+            IsClosed = isClosed
+            Created = account.Created
+            Balance = account.Balance
+            Credit = account.Credit
         }
 
     type IAccounts =

@@ -8,7 +8,7 @@ open Usemam.Ledger.Domain.Result
 type GetAllAccountsQuery() =
     interface IQuery<seq<AccountType>> with
         member this.run state =
-            tryCatch (fun x -> x :> seq<AccountType>) state.accounts
+            Success (state.accounts |> Seq.filter (fun a -> not a.IsClosed))
 
 type GetLastNTransactionsQuery(n : int, accountName : string) =
     interface IQuery<seq<TransactionType>> with

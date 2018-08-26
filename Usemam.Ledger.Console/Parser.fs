@@ -172,6 +172,14 @@ let setCreditLimit str =
         return SetCreditLimit(name, credit)
     }
 
+let closeAccount str =
+    result {
+        let! _, maybeName = all [reserved "close account"; space] str
+        let! name, afterName = matchString maybeName
+        let! _ = fin afterName
+        return CloseAccount name
+    }
+
 let details str =
 
     let matchOn str =
@@ -266,4 +274,4 @@ let redo str =
     }
 
 let parse  =
-    any [ exit; help; show; addAccount; setCreditLimit; transfer; credit; debit; undo; redo; ]
+    any [ exit; help; show; addAccount; setCreditLimit; closeAccount; transfer; credit; debit; undo; redo; ]

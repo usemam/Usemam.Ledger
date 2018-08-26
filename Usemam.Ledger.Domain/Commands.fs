@@ -42,6 +42,25 @@ type SetCreditLimitCommand(name, amount) =
                     state |> fun s -> s.replaceAccount oldAccount
             }
 
+type CloseAccountCommand(name) =
+    interface ICommand with
+        member this.run state =
+            let account = state.accounts.getByName name
+            result {
+                let! a = fromOption (sprintf "Can't find account '%s'" name) account
+                let newAccount = Account.setIsClosed a true
+                return
+                    state |> fun s -> s.replaceAccount newAccount
+            }
+        member this.rollback state =
+            let account = state.accounts.getByName name
+            result {
+                let! a = fromOption (sprintf "Can't find account '%s'" name) account
+                let newAccount = Account.setIsClosed a false
+                return
+                    state |> fun s -> s.replaceAccount newAccount
+            }
+
 type TransferCommand(amount, source, dest, clock) =
     interface ICommand with
         member this.run state =
