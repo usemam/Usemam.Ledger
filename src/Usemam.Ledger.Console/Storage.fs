@@ -1,6 +1,5 @@
 ﻿module Usemam.Ledger.Console.Storage
 
-open System.Configuration
 open System.IO
 
 open Newtonsoft.Json
@@ -8,6 +7,8 @@ open Newtonsoft.Json
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 open Usemam.Ledger.Backup
+
+open Microsoft.Extensions.Configuration
 
 let saveJson fileName json = File.WriteAllText (fileName, json)
 
@@ -40,5 +41,7 @@ let loadState () =
     }
 
 let backup () =
-    let remoteStorage = new DropboxStorage("DropboxAccessToken" |> ConfigurationManager.AppSettings.Get)
+    let configBuilder = new ConfigurationBuilder()
+    let config = configBuilder.AddJsonFile("appsettings.json", true, true).Build()
+    let remoteStorage = new DropboxStorage(config.Item "DropboxAccessToken")
     BackupFacade.run ["accounts.db";"transactions.db"] remoteStorage Clocks.machineClock

@@ -1,7 +1,0 @@
-FsCheck
-FsCheck.Xunit
-FSharp.Core
-xunit.abstractions
-xunit.assert
-xunit.extensibility.core
-xunit.extensibility.execution

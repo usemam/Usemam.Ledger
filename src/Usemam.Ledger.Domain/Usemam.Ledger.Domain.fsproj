@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Clocks.fs" />
+    <Compile Include="Result.fs" />
+    <Compile Include="Money.fs" />
+    <Compile Include="Account.fs" />
+    <Compile Include="Transaction.fs" />
+    <Compile Include="State.fs" />
+    <Compile Include="Queries.fs" />
+    <Compile Include="Commands.fs" />
+  </ItemGroup>
+
+</Project>
