@@ -17,6 +17,6 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: './tests/*.Tests/*.fsproj'
+    projects: '**/tests/*Tests/*.fsproj'
     arguments: '--configuration $(buildConfiguration)'
   displayName: 'Run tests'
