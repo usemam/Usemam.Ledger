@@ -14,7 +14,9 @@ steps:
 - script: dotnet build
   displayName: 'Build projects'
 
-- script: |
-    dotnet test ./tests/Usemam.Ledger.Backup.Tests/Usemam.Ledger.Backup.Tests.fsproj
-    dotnet test ./tests/Usemam.Ledger.Domain.Tests/Usemam.Ledger.Domain.Tests.fsproj
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/tests/*Tests/*.fsproj'
+    arguments: '--configuration $(buildConfiguration)'
   displayName: 'Run tests'
