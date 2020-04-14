@@ -16,10 +16,13 @@ module Helper =
             | Transfer (m, a1, a2) -> printfn "Transferred $%.2f from %s to %s" m a1.Name a2.Name
         ) |> ignore
     
-    let printAccount name accounts =
-        match Map.tryFind name accounts with
-        | Some account -> printfn "Account '%s' - $%.2f" account.Name account.Balance
-        | None -> printfn "Account '%s' not found" name
+    let printAccounts accounts =
+        accounts
+        |> Map.iter (fun name acc -> printfn "Account '%s' - $%.2f" name acc.Balance)
+    
+    let printCategories categories =
+        categories
+        |> Map.iter (fun name balance -> printfn "Category '%s' has $%.2f" name balance)
 
 module Program =
 
@@ -41,6 +44,11 @@ module Program =
         let accounts =
             eventStore.Get ()
             |> project accountsProjection
+        Helper.printAccounts accounts
         
-        Helper.printAccount "Cash" accounts
+        let categories =
+            eventStore.Get ()
+            |> project categoriesProjection
+        Helper.printCategories categories
+        
         0 // return an integer exit code
