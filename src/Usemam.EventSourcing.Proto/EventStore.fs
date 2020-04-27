@@ -2,19 +2,26 @@ namespace Usemam.EventSourcing.Proto
 
 module EventStore =
 
+    type Aggregate = System.Guid
+
     type EventStore<'Event> =
         {
-            Get: unit -> 'Event list
-            Append: 'Event list -> unit
+            Get: unit -> Map<Aggregate, 'Event list>
+            GetStream: Aggregate -> 'Event list
+            Append: Aggregate -> 'Event list -> unit
         }
     
     type private Msg<'Event> =
-        | Get of AsyncReplyChannel<'Event list>
-        | Append of 'Event list
+        | Get of AsyncReplyChannel<Map<Aggregate, 'Event list>>
+        | GetStream of Aggregate * AsyncReplyChannel<'Event list>
+        | Append of Aggregate * 'Event list
     
     let initialize () : EventStore<'Event> =
-        
-        let history = []
+
+        let getAggregateStream aggregate history =
+            history
+            |> Map.tryFind aggregate
+            |> Option.defaultValue []
 
         let mailbox =
             MailboxProcessor.Start(fun inbox ->
@@ -26,23 +33,36 @@ module EventStore =
                     | Get reply ->
                         reply.Reply history
                         return! loop history
+                    
+                    | GetStream (aggregate, reply) ->
+                        let stream =
+                            getAggregateStream aggregate history
+                        reply.Reply stream
+                        return! loop history
 
-                    | Append events  ->
-                        return! loop (history @ events)
+                    | Append (aggregate, events)  ->
+                        let stream = getAggregateStream aggregate history
+                        let newHistory =
+                            history
+                            |> Map.add aggregate (stream @ events)
+                        return! loop newHistory
                   }
 
-                loop history
+                loop Map.empty
             )
 
         let get () =
             mailbox.PostAndReply Get
         
-        let append events =
-            events
-            |> Append
+        let getStream aggregate =
+            mailbox.PostAndReply (fun reply -> GetStream (aggregate, reply))
+        
+        let append aggregate events =
+            Append (aggregate, events)
             |> mailbox.Post
         
         {
             Get = get
+            GetStream = getStream
             Append = append
         }

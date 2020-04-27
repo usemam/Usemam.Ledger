@@ -28,26 +28,27 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
+        let userId = Guid.NewGuid()
         let eventStore : EventStore<Transaction> = initialize()
         let account =
             {
                 Name = "Cash"
                 Balance = 0.0
             }
-        eventStore.Append [Credit (100.0, "Income", account)]
-        eventStore.Append [Debit (15.0, account, "Grocery")]
-        eventStore.Append [Debit (7.5, account, "Entertainment")]
+        eventStore.Append userId [Credit (100.0, "Income", account)]
+        eventStore.Append userId [Debit (15.0, account, "Grocery")]
+        eventStore.Append userId [Debit (7.5, account, "Entertainment")]
 
-        eventStore.Get ()
+        eventStore.GetStream userId
         |> Helper.printEvents
         
         let accounts =
-            eventStore.Get ()
+            eventStore.GetStream userId
             |> project accountsProjection
         Helper.printAccounts accounts
         
         let categories =
-            eventStore.Get ()
+            eventStore.GetStream userId
             |> project categoriesProjection
         Helper.printCategories categories
         

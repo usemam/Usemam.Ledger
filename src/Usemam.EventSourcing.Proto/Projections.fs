@@ -33,10 +33,9 @@ module Projections =
     let private debitAccount money =
         updateAccount (fun m -> m - money)
     
-    let private transfer money source target accounts =
-        accounts
-        |> updateAccount (fun m -> m - money) source
-        |> updateAccount (fun m -> m + money) target
+    let private transfer money source target =
+        updateAccount (fun m -> m - money) source
+        >> updateAccount (fun m -> m + money) target
 
     let private applyTransactionToAccount transaction =
         match transaction with
