@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Infrastructure/Types.fs" />
@@ -10,6 +10,7 @@
     <Compile Include="Infrastructure/EventListener.fs" />
     <Compile Include="Infrastructure/EventStore.fs" />    
     <Compile Include="Infrastructure/EventSourced.fs" />
+    <Compile Include="Infrastructure/EventStorage/InMemoryStorage.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="EventStore.fs" />
     <Compile Include="Projections.fs" />

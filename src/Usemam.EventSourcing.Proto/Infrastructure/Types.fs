@@ -15,10 +15,10 @@ type EventEnvelope<'Event> =
     }
 
 type EventHandler<'Event> =
-  EventEnvelope<'Event> list -> Async<unit>
+    EventEnvelope<'Event> list -> Async<unit>
 
 type EventResult<'Event> =
-  Result<EventEnvelope<'Event> list, string>
+    Result<EventEnvelope<'Event> list, string>
 
 type EventStore<'Event> =
     {
