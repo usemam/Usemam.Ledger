@@ -5,5 +5,8 @@ open System.Reflection
 
 let displayText () =
     let assembly = Assembly.GetExecutingAssembly()
-    use textReader = new StreamReader(assembly.GetManifestResourceStream "console_commands.txt")
+    let resourceStream =
+        sprintf "%s.console_commands.txt" "Usemam.Ledger.Console"
+        |> assembly.GetManifestResourceStream
+    use textReader = new StreamReader(resourceStream)
     textReader.ReadToEnd() |> printfn "%s"

@@ -10,9 +10,27 @@ open Usemam.Ledger.Backup
 
 open Microsoft.Extensions.Configuration
 
-let saveJson fileName json = File.WriteAllText (fileName, json)
+type private StorageConfiguration =
+    {
+        DropboxAccessToken : string
+        AccountsFilePath : string
+        TransactionsFilePath : string
+    }
 
-let loadJson fileName = File.ReadAllText fileName
+let private loadStorageConfiguration () =
+    let loadConfig () =
+        let configBuilder = ConfigurationBuilder()
+        let config = configBuilder.AddJsonFile("appsettings.json", true, true).Build()
+        {
+            DropboxAccessToken = config.Item "DropboxAccessToken"
+            AccountsFilePath = config.Item "AccountsFilePath"
+            TransactionsFilePath = config.Item "TransactionsFilePath"
+        }
+    tryCatch (loadConfig) ()
+
+let private saveJson fileName json = File.WriteAllText (fileName, json)
+
+let private loadJson fileName = File.ReadAllText fileName
 
 let saveState (state : State) =
     let saveCollection collection fileName =
@@ -20,18 +38,20 @@ let saveState (state : State) =
         tryCatch (saveJson fileName) json
 
     result {
-        let! _ = saveCollection state.accounts "accounts.db"
-        let! _ = saveCollection state.transactions "transactions.db"
+        let! config = loadStorageConfiguration()
+        let! _ = saveCollection state.accounts config.AccountsFilePath
+        let! _ = saveCollection state.transactions config.TransactionsFilePath
         return ()
     }
 
-let deserialize<'T> json = JsonConvert.DeserializeObject<'T> json
+let private deserialize<'T> json = JsonConvert.DeserializeObject<'T> json
 
 let loadState () =
     result {
-        let! accountsJson = tryCatch loadJson "accounts.db"
+        let! config = loadStorageConfiguration()
+        let! accountsJson = tryCatch loadJson config.AccountsFilePath
         let! accounts = tryCatch deserialize<AccountType list> accountsJson
-        let! transactionsJson = tryCatch loadJson "transactions.db"
+        let! transactionsJson = tryCatch loadJson config.TransactionsFilePath
         let! transactions = tryCatch deserialize<TransactionType list> transactionsJson
         let state =
             State(
@@ -41,7 +61,9 @@ let loadState () =
     }
 
 let backup () =
-    let configBuilder = new ConfigurationBuilder()
-    let config = configBuilder.AddJsonFile("appsettings.json", true, true).Build()
-    let remoteStorage = new DropboxStorage(config.Item "DropboxAccessToken")
-    BackupFacade.run ["accounts.db";"transactions.db"] remoteStorage Clocks.machineClock
+    result {
+        let! config = loadStorageConfiguration()
+        let remoteStorage = DropboxStorage(config.DropboxAccessToken)
+        return Clocks.machineClock
+        |> BackupFacade.run [config.AccountsFilePath;config.TransactionsFilePath] remoteStorage
+    }
