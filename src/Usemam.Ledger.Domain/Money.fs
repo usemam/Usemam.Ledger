@@ -71,3 +71,4 @@ type Money(amount : AmountType, currency : Currency) =
         Money(m1.Amount + m2.Amount, m1.Currency)
     static member (-) (m1 : Money, m2 : Money) =
         Money(m1.Amount - m2.Amount, m1.Currency)
+    static member Zero = Money(Amount.zero, USD)

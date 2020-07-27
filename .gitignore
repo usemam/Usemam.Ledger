@@ -237,3 +237,7 @@ _Pvt_Extensions
 
 # Ionide
 .ionide/
+
+# Test db files
+accounts.db
+transactions.db

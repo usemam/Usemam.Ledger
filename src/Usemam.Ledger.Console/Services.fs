@@ -25,10 +25,15 @@ let query q (tracker : CommandTracker) =
         result {
             let queryObj = GetTotalsQuery (min, max) :> IQuery<Map<string, Money>>
             let! queryResult = queryObj.run tracker.state
+            queryResult
+            |> Seq.sortBy (fun x -> x.Value)
+            |> Seq.iteri (fun i x -> printfn "%i. %s - %O" (i+1) x.Key x.Value)
+            printfn "--------------------------------"
+            |> ignore
             return
                 queryResult
-                |> Seq.sortBy (fun x -> x.Value)
-                |> Seq.iteri (fun i x -> printfn "%i. %s - %O" (i+1) x.Key x.Value)
+                |> Seq.sumBy (fun x -> x.Value)
+                |> printfn "Total - %O"
         }
 
     result {
