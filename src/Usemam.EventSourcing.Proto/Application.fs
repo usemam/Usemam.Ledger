@@ -3,9 +3,7 @@ namespace Usemam.EventSourcing.Proto
 module API =
 
     open System
-    open Usemam.EventSourcing.Proto.Infrastructure
-
-    type UserId = EventSource
+    open Usemam.EventSourcing.Proto.Domain
 
     type Query =
         | GetAccounts of UserId
@@ -16,7 +14,7 @@ module QueryHandlers =
 
     open System
     open API
-    open Domain
+    open Usemam.EventSourcing.Proto.Domain
     open Usemam.EventSourcing.Proto.Infrastructure
 
     let getAccounts accounts : QueryHandler<Query> =
@@ -36,28 +34,29 @@ module QueryHandlers =
         
         { Handle = handleQuery }
     
-    let getLastTransactions transactions : QueryHandler<Query> =
-        let filterTransactionsByAccount (transactionList : Transaction list) accountName =
+    let getLastTransactions events : QueryHandler<Query> =
+        let filterEventsByAccount (eventList : Event list) accountName =
             let matchName account =
                 account.Name.StartsWith(accountName, StringComparison.OrdinalIgnoreCase)
-            transactionList
+            eventList
             |> List.filter (fun t ->
                 match t with
-                | Credit(_, _, a) -> matchName a
-                | Debit (_, a, _) -> matchName a
-                | Transfer(_, a1, a2) -> matchName a1 || matchName a2)
+                | TransactionCredit(_, _, a) -> matchName a
+                | TransactionDebit (_, a, _) -> matchName a
+                | TransactionTransfer(_, a1, a2) -> matchName a1 || matchName a2
+                | _ -> false)
         let handleQuery query =
             match query with
             | GetLastTransactions(userId, n, maybeAccountName) ->
                 async {
-                    let! state = transactions userId
+                    let! state = events userId
 
                     return state
                         |> Option.defaultValue List.empty
-                        |> (fun transactionList ->
+                        |> (fun eventList ->
                             match maybeAccountName with
-                            | None -> transactionList
-                            | Some accountName -> filterTransactionsByAccount transactionList accountName)
+                            | None -> eventList
+                            | Some accountName -> filterEventsByAccount eventList accountName)
                         |> List.take n
                         |> box
                         |> Handled

@@ -2,6 +2,9 @@ namespace Usemam.EventSourcing.Proto.Infrastructure
 
 type EventSource = System.Guid
 
+type EventProducer<'Event> =
+    'Event list -> 'Event list
+
 type EventMetadata =
     {
         Source : EventSource
