@@ -8,8 +8,6 @@ open Usemam.Ledger.Console.Services
 
 open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
-open Usemam.Ledger.Console
-open Usemam.Ledger.Backup
 
 [<EntryPoint>]
 let main _ = 
@@ -40,7 +38,7 @@ let main _ =
 
     readCommandAndRunService appState
 
-    match Storage.backup() with
+    match backup() with
     | Success _ -> printfn "%s" "Backup finished"
     | Failure m -> printfn "%s" m
         

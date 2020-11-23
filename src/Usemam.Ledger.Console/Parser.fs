@@ -1,277 +1,83 @@
-﻿module Usemam.Ledger.Console.Parser
+module Usemam.Ledger.Console.Parser
 
 open System
+
+open FParsec
 
 open Usemam.Ledger.Console.Command
 
 open Usemam.Ledger.Domain
-open Usemam.Ledger.Domain.Result
 
-let (|Prefix|_|) (p : string) (s : string) =
-    match s.StartsWith p with
-    | true -> p.Length |> s.Substring |> Some
-    | false -> None
+type private UserState = unit
+type private Parser<'t> = Parser<'t, UserState>
 
-let reserved str input =
-    match input with
-    | Prefix str rest -> Success (str, rest)
-    | _ ->
-        sprintf "Expected '%s' to go first in '%s'." str input
-        |> Failure
+let private str : string -> Parser<string> = pstring
+let private ws = spaces
+let private strWs s = str s .>> ws
 
-let space = reserved " "
+let private pint : Parser<int32> =
+  pint32 .>> ws
+let private pMoney : Parser<AmountType> =
+  pfloat .>> ws |>> (decimal >> Amount.create)
+let private pName : Parser<string> =
+  between (str "\"") (str "\"") (many1Satisfy (fun c -> c <> '\\' && c <> '"')) .>> ws
+let private pDate : Parser<DateTimeOffset> =
+  let sep = str "/"
+  pipe5 pint32 sep pint32 sep pint32 (fun m _ d _ y -> DateTimeOffset(DateTime(y, m, d))) .>> ws
 
-let empty = String.Empty
+let private pAccountsCommand = strWs "accounts" |>> (fun _ -> Show Accounts)
+let private pLastTrnsCommand =
+  pipe2 (strWs "last" >>. pint) (strWs "for" >>. pName) (fun count account -> LastN (count, account) |> Show)
+let private pTotalCommand =
+  let pTotal = strWs "total" |>> (fun _ -> (Clocks.start(), Clocks.machineClock()))
+  let pTotalFiltered = pipe2 (strWs "total" >>. pDate) (strWs "to" >>. pDate) (fun min max -> (min, max))
+  (pTotalFiltered <|> pTotal) |>> (fun (min, max) -> Total (min, max) |> Show)
+let private pShowCommand = strWs "show" >>. (pAccountsCommand <|> pLastTrnsCommand <|> pTotalCommand)
 
-let fin (str : string) =
-    match str.Trim() = empty with
-    | true -> Success(empty, str)
-    | false ->
-        sprintf "Expected end of input string but was '%s'." str
-        |> Failure
+let private pAddAccountCommand =
+  strWs "add account" >>. pipe3 pName pMoney (opt pMoney) (
+    fun account amount credit -> AddAccount (account, amount, defaultArg credit Amount.zero))
 
-let rec any parsers str =
-    match parsers with
-    | [] ->
-        sprintf "'%s' doesn't match with any possible option." str
-        |> Failure
-    | p::rest ->
-        match p str with
-        | Success x -> Success x
-        | Failure _ -> any rest str
+let private pSetCreditLimitCommand =
+  strWs "set account" >>. pipe2 pName pMoney (fun n a -> SetCreditLimit (n, a))
 
-let all parsers str =
-    let rec innerMatch parsers parsed str =
-        result {
-            match parsers with
-            | [] -> return (parsed, str)
-            | p::ps ->
-                let! x, rest = p str
-                return! innerMatch ps (x::parsed) rest
-        }
-    result {
-        let! matched, rest = innerMatch parsers [] str
-        return matched |> List.rev, rest
-    }
+let private pCloseAccountCommand =
+  strWs "close account" >>. pName |>> CloseAccount
 
-let word (str : string) delimiter =
-    let w = str |> Seq.takeWhile (fun c -> c <> delimiter) |> String.Concat
-    let rest = str.Substring w.Length
-    (w, rest)
+let private pOn =
+  opt (strWs "on" >>. pDate)
+  |>> (fun d ->
+    defaultArg (Option.map Clocks.moment d) Clocks.machineClock
+    |> On)
+let private pFrom = strWs "from" >>. pName |>> From
+let private pTo = strWs "to" >>. pName |>> To
 
-let amount str =
-    result {
-        let maybeNumber, rest = word str ' '
-        let! amount =
-            Amount.tryParse maybeNumber
-            |> Result.fromOption (sprintf "%s is either negative or not a number." maybeNumber)
-        return (amount, rest)
-    }
+let private pTransferCommand =
+  strWs "transfer" >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Transfer (amount, on, from, t0))
+let private pCreditCommand =
+  strWs "credit" >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Credit (amount, on, from, t0))
+let private pDebitCommand =
+  strWs "debit" >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Debit (amount, on, from, t0))
 
-let matchString str =
-    result {
-        let! _, afterQuote = reserved "\"" str
-        let maybeString, afterString = word afterQuote '"'
-        let! _, rest = reserved "\"" afterString
-        return (maybeString, rest)
-    }
+let private pUndoCommand = strWs "undo" |>> (fun _ -> Undo)
+let private pRedoCommand = strWs "redo" |>> (fun _ -> Redo)
+let private pHelpCommand = strWs "help" |>> (fun _ -> Help)
+let private pExitCommand = strWs "exit" |>> (fun _ -> Exit)
 
-let matchCount str =
-    result {
-        let maybeNumber, rest = word str ' '
-        let! count = Result.tryCatch Int32.Parse maybeNumber
-        return (count, rest)
-    }
+let private pCommand =
+  pShowCommand <|>
+  pAddAccountCommand <|>
+  pSetCreditLimitCommand <|>
+  pCloseAccountCommand <|>
+  pTransferCommand <|>
+  pCreditCommand <|>
+  pDebitCommand <|>
+  pUndoCommand <|>
+  pRedoCommand <|>
+  pHelpCommand <|>
+  pExitCommand
 
-let exit str =
-    result {
-        let! _ = all [reserved "exit"; fin] str
-        return Exit
-    }
-
-let show str =
-    let matchAccounts str =
-        result {
-            let! _ = all [reserved "accounts"; fin] str
-            return Accounts
-        }
-    let matchLastN str =
-        let matchForAccount str =
-            result {
-                let! _, maybeName = all [space; reserved "for"; space] str
-                let! name, rest = matchString maybeName
-                let! _ = fin rest
-                return name, empty
-            }
-        result {
-            let! _, beforeN = all [reserved "last"; space] str
-            let! n, rest = matchCount beforeN
-            let! name, _ = any [fin; matchForAccount] rest
-            return LastN(n, name)
-        }
-    let total str =
-        result {
-            let matchTotal str =
-                result {
-                    let! _ = all [reserved "total"; fin] str
-                    return (Clocks.start(), Clocks.machineClock())
-                }
-            let matchTotalWithDates str =
-                let date str =
-                    result {
-                        let maybeDate, rest = word str ' '
-                        let! date = tryCatch DateTimeOffset.Parse maybeDate
-                        return (date, rest)
-                    }
-                result {
-                    let! _, beforeMin = all [reserved "total"; space] str
-                    let! min, afterMin = date beforeMin
-                    let! _, beforeMax = all [space; reserved "to"; space] afterMin
-                    let! max, afterMax = date beforeMax
-                    let! _ = fin afterMax
-                    return (min, max)
-                }
-            let! timeFrame = any [matchTotal; matchTotalWithDates] str
-            return Total timeFrame
-        }
-    result {
-        let! _, rest = all [reserved "show"; space] str
-        let! query =
-            any [ matchAccounts; matchLastN; total ] rest
-        return Show query
-    }
-
-let someCredit s =
-    result {
-        let! _, maybeAmount = all [space; reserved "credit"; space] s
-        let! amount, rest = amount maybeAmount
-        let! _ = fin rest
-        return amount
-    }
-
-let addAccount str =
-    let noCredit s =
-        result {
-            let! _ = fin s
-            return Amount.zero
-        }
-    result {
-        let! _, maybeName = all [reserved "add account"; space] str
-        let! name, afterName = matchString maybeName
-        let! _, maybeAmount = space afterName
-        let! amount, rest = amount maybeAmount
-        let! credit = any [ noCredit; someCredit ] rest
-        return AddAccount (name, amount, credit)
-    }
-
-let setCreditLimit str =
-    result {
-        let! _, maybeName = all [reserved "set account"; space] str
-        let! name, afterName = matchString maybeName
-        let! credit = someCredit afterName
-        return SetCreditLimit(name, credit)
-    }
-
-let closeAccount str =
-    result {
-        let! _, maybeName = all [reserved "close account"; space] str
-        let! name, afterName = matchString maybeName
-        let! _ = fin afterName
-        return CloseAccount name
-    }
-
-let details str =
-
-    let matchOn str =
-        let clock str =
-            result {
-                let maybeDate, rest = word str ' '
-                let! date = tryCatch DateTimeOffset.Parse maybeDate
-                return (Clocks.moment date, rest)
-            }
-        let fromInput input =
-            result {
-                let! _, afterOn = reserved "on" input
-                let! _, afterSpace = space afterOn
-                let! clock, afterClock = clock afterSpace
-                let! _, rest = space afterClock
-                return clock, rest
-            }
-        let now str =
-            result {
-                return (Clocks.machineClock, str)
-            }
-        result {
-            let! clock, rest = any [fromInput; now] str
-            return (On clock, rest)
-        }
-
-    let matchFrom str =
-        result {
-            let! _, afterFrom = reserved "from" str
-            let! _, afterSpace = space afterFrom
-            let! name, rest = matchString afterSpace
-            return (From name, rest)
-        }
-
-    let matchTo str =
-        result {
-            let! _, afterFrom = reserved "to" str
-            let! _, afterSpace = space afterFrom
-            let! name, rest = matchString afterSpace
-            return (To name, rest)
-        }
-
-    result {
-        let! _, afterSpace1 = space str
-        let! amount, afterAmount = amount afterSpace1
-        let! _, afterSpace2 = space afterAmount
-        let! on, afterOn = matchOn afterSpace2
-        let! from, afterFrom = matchFrom afterOn
-        let! _, afterSpace3 = space afterFrom
-        let! t0, afterTo = matchTo afterSpace3
-        let! _ = fin afterTo
-        return (amount, on, from, t0)
-    }
-
-let transfer str =
-    result {
-        let! _, afterTransfer = reserved "transfer" str
-        let! amount, on, from, t0 = details afterTransfer
-        return Command.Transfer (amount, on, from, t0)
-    }
-
-let credit str =
-    result {
-        let! _, afterCredit = reserved "credit" str
-        let! amount, on, from, t0 = details afterCredit
-        return Command.Credit (amount, on, from, t0)
-    }
-
-let debit str =
-    result {
-        let! _, afterDebit = reserved "debit" str
-        let! amount, on, from, t0 = details afterDebit
-        return Command.Debit (amount, on, from, t0)
-    }
-
-let help str =
-    result {
-        let! _ = all [reserved "help"; fin] str
-        return Help
-    }
-
-let undo str =
-    result {
-        let! _ = all [reserved "undo"; fin] str
-        return Undo
-    }
-
-let redo str =
-    result {
-        let! _ = all [reserved "redo"; fin] str
-        return Redo
-    }
-
-let parse  =
-    any [ exit; help; show; addAccount; setCreditLimit; closeAccount; transfer; credit; debit; undo; redo; ]
+let parse input =
+  match run pCommand input with
+  | ParserResult.Success (command, _, _) -> Success command
+  | ParserResult.Failure (errorMsg, _, _) -> Failure errorMsg
