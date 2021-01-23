@@ -241,3 +241,6 @@ _Pvt_Extensions
 # Test db files
 accounts.db
 transactions.db
+
+# Mac OS
+.DS_Store
