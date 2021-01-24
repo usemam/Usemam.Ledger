@@ -1,8 +1,8 @@
-﻿#r "../packages/FSharp.Data/lib/net45/FSharp.Data.dll"
+﻿#r "nuget: FSharp.Data"
 open FSharp.Data
 
 [<Literal>]
-let path = "D:\\tmp\\class_learning.csv"
+let path = "learning_data_full_path.csv"
 
 type LearningData = CsvProvider<path>
 

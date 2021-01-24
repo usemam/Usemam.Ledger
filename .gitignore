@@ -238,9 +238,10 @@ _Pvt_Extensions
 # Ionide
 .ionide/
 
-# Test db files
+# Test files
 accounts.db
 transactions.db
+*.csv
 
 # Mac OS
 .DS_Store
