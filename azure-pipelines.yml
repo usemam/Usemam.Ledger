@@ -7,9 +7,13 @@ trigger:
 - master
 
 pool:
-  vmImage: 'Ubuntu-18.04'
+  vmImage: 'ubuntu-latest'
 
 steps:
+
+- task: UseDotNet@2
+  inputs:
+    version: '6.x'
 
 - script: dotnet build
   displayName: 'Build projects'
