@@ -1,6 +1,7 @@
 ﻿open System
 
 open Usemam.Ledger.Console.ColorPrint
+open Usemam.Ledger.Console.Input
 open Usemam.Ledger.Console.Command
 open Usemam.Ledger.Console.Parser
 open Usemam.Ledger.Console.Storage
@@ -22,8 +23,7 @@ let main _ =
         let currentResult =
             result {
                 let! state = stateResult
-                cprintf ConsoleColor.Yellow "> "
-                let input = System.Console.In.ReadLine()
+                let input = readInput()
                 let! command = parse input
                 let service = fromCommand command
                 let! newState = service state
@@ -36,6 +36,7 @@ let main _ =
             error message
             readCommandAndRunService stateResult
 
+    printEntryArrow()
     readCommandAndRunService appState
 
     match backup() with

@@ -4,8 +4,8 @@ open System
 
 open FParsec
 
+open Usemam.Ledger.Console.Input
 open Usemam.Ledger.Console.Command
-
 open Usemam.Ledger.Domain
 
 type private UserState = unit
@@ -77,7 +77,16 @@ let private pCommand =
   pHelpCommand <|>
   pExitCommand
 
+let private parseKeyPress keyPress =
+  match keyPress with
+  | KeyPress.ArrowLeft -> Success ArrowLeft
+  | KeyPress.ArrowRight -> Success ArrowRight
+  | _ -> Failure "This key doesn't have associated command"
+
 let parse input =
-  match run pCommand input with
-  | ParserResult.Success (command, _, _) -> Success command
-  | ParserResult.Failure (errorMsg, _, _) -> Failure errorMsg
+  match input with
+  | Key keyPress -> parseKeyPress keyPress
+  | String inputStr ->
+    match run pCommand inputStr with
+    | ParserResult.Success (command, _, _) -> Success command
+    | ParserResult.Failure (errorMsg, _, _) -> Failure errorMsg

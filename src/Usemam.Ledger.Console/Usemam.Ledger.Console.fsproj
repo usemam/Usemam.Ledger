@@ -13,6 +13,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Compile Include="ColorPrint.fs" />
+    <Compile Include="Input.fs" />
     <Compile Include="Command.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Storage.fs" />

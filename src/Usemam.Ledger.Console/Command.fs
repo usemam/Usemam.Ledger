@@ -23,6 +23,8 @@ type Command =
     | Transfer of AmountType * On * From * To
     | Credit of AmountType * On * From * To
     | Debit of AmountType * On * From * To
+    | ArrowLeft
+    | ArrowRight
     | Undo
     | Redo
     | Help
