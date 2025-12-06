@@ -4,19 +4,21 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6F4661DC-6921-4F37-8B01-F8DBA00C85FF}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Backup", "src\Usemam.Ledger.Backup\Usemam.Ledger.Backup.fsproj", "{5F264EF9-321F-4C97-8214-88973E414763}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Backup", "src/Usemam.Ledger.Backup/Usemam.Ledger.Backup.fsproj", "{5F264EF9-321F-4C97-8214-88973E414763}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Console", "src\Usemam.Ledger.Console\Usemam.Ledger.Console.fsproj", "{38E8A95B-E6A0-4D06-BE4D-6659C18A612C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Console", "src/Usemam.Ledger.Console/Usemam.Ledger.Console.fsproj", "{38E8A95B-E6A0-4D06-BE4D-6659C18A612C}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain", "src\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj", "{E48B9554-56F9-404A-8280-E0BBC81CD037}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain", "src/Usemam.Ledger.Domain/Usemam.Ledger.Domain.fsproj", "{E48B9554-56F9-404A-8280-E0BBC81CD037}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E2E79C85-E4B1-4D0C-B415-0E1AD287B791}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Backup.Tests", "tests\Usemam.Ledger.Backup.Tests\Usemam.Ledger.Backup.Tests.fsproj", "{26739DDC-30CB-4984-9682-381B7A255D28}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Backup.Tests", "tests/Usemam.Ledger.Backup.Tests/Usemam.Ledger.Backup.Tests.fsproj", "{26739DDC-30CB-4984-9682-381B7A255D28}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain.Tests", "tests\Usemam.Ledger.Domain.Tests\Usemam.Ledger.Domain.Tests.fsproj", "{B708EBD7-D9D0-4C3B-84D5-A4DED876ACB6}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain.Tests", "tests/Usemam.Ledger.Domain.Tests/Usemam.Ledger.Domain.Tests.fsproj", "{B708EBD7-D9D0-4C3B-84D5-A4DED876ACB6}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Learning", "src\Usemam.Ledger.Learning\Usemam.Ledger.Learning.fsproj", "{A87B375E-0E50-4841-9398-EA3EF6FC941C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Learning", "src/Usemam.Ledger.Learning/Usemam.Ledger.Learning.fsproj", "{A87B375E-0E50-4841-9398-EA3EF6FC941C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.CommandLine", "src/Usemam.Ledger.CommandLine/Usemam.Ledger.CommandLine.csproj", "{F182AEB8-AA88-4F97-8883-F3D1491A7583}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,6 +102,18 @@ Global
 		{A87B375E-0E50-4841-9398-EA3EF6FC941C}.Release|x64.Build.0 = Release|Any CPU
 		{A87B375E-0E50-4841-9398-EA3EF6FC941C}.Release|x86.ActiveCfg = Release|Any CPU
 		{A87B375E-0E50-4841-9398-EA3EF6FC941C}.Release|x86.Build.0 = Release|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Debug|x64.Build.0 = Debug|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Debug|x86.Build.0 = Debug|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x64.ActiveCfg = Release|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x64.Build.0 = Release|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x86.ActiveCfg = Release|Any CPU
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +125,7 @@ Global
 		{26739DDC-30CB-4984-9682-381B7A255D28} = {E2E79C85-E4B1-4D0C-B415-0E1AD287B791}
 		{B708EBD7-D9D0-4C3B-84D5-A4DED876ACB6} = {E2E79C85-E4B1-4D0C-B415-0E1AD287B791}
 		{A87B375E-0E50-4841-9398-EA3EF6FC941C} = {6F4661DC-6921-4F37-8B01-F8DBA00C85FF}
+		{F182AEB8-AA88-4F97-8883-F3D1491A7583} = {6F4661DC-6921-4F37-8B01-F8DBA00C85FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54917C5F-3685-411E-A09E-2455181EA13E}

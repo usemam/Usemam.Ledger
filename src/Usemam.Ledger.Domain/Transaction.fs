@@ -112,3 +112,8 @@ module Transaction =
                 |> Debit
                 |> create clock amount
         }
+
+    let isTransfer (transaction : TransactionType) =
+        match transaction.Description with
+        | Transfer _ -> true
+        | _ -> false
