@@ -26,9 +26,9 @@ let private loadStorageConfiguration () =
             AccountsFilePath = config.Item "AccountsFilePath"
             TransactionsFilePath = config.Item "TransactionsFilePath"
         }
-    tryCatch (loadConfig) ()
+    tryCatch loadConfig ()
 
-let private saveJson fileName json = File.WriteAllText (fileName, json)
+let private saveJson fileName (json : string)= File.WriteAllText (fileName, json)
 
 let private loadJson fileName = File.ReadAllText fileName
 

@@ -1,17 +1,17 @@
 ﻿module Usemam.Ledger.Console.ColorPrint
 
+open System
 open Microsoft.FSharp.Core.Printf
 
 let cprintf color format =
     let print (s : string) = 
-        let old = System.Console.ForegroundColor 
+        let old = Console.ForegroundColor 
         try 
-            System.Console.ForegroundColor <- color;
-            System.Console.Write s
+            Console.ForegroundColor <- color;
+            Console.Write s
         finally
-            System.Console.ForegroundColor <- old
+            Console.ForegroundColor <- old
     kprintf print format
 
-let cprintfn color format = 
-    cprintf color format
-    printfn ""
+let printEntryArrow () =
+    cprintf ConsoleColor.Yellow "> "

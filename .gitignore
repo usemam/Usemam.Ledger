@@ -245,3 +245,6 @@ transactions.db
 
 # Mac OS
 .DS_Store
+
+# Rider
+.idea

@@ -4,8 +4,8 @@ open System
 
 open FParsec
 
+open Usemam.Ledger.Console
 open Usemam.Ledger.Console.Command
-
 open Usemam.Ledger.Domain
 
 type private UserState = unit
@@ -25,44 +25,44 @@ let private pDate : Parser<DateTimeOffset> =
   let sep = str "/"
   pipe5 pint32 sep pint32 sep pint32 (fun m _ d _ y -> DateTimeOffset(DateTime(y, m, d))) .>> ws
 
-let private pAccountsCommand = strWs "accounts" |>> (fun _ -> Show Accounts)
+let private pAccountsCommand = strWs Keywords.Accounts |>> (fun _ -> Show Accounts)
 let private pLastTrnsCommand =
-  pipe2 (strWs "last" >>. pint) (strWs "for" >>. pName) (fun count account -> LastN (count, account) |> Show)
+  pipe2 (strWs Keywords.Last >>. pint) (strWs Keywords.For >>. pName) (fun count account -> LastN (count, account) |> Show)
 let private pTotalCommand =
-  let pTotal = strWs "total" |>> (fun _ -> (Clocks.start(), Clocks.machineClock()))
-  let pTotalFiltered = pipe2 (strWs "total" >>. pDate) (strWs "to" >>. pDate) (fun min max -> (min, max))
+  let pTotal = strWs Keywords.Total |>> (fun _ -> (Clocks.start(), Clocks.machineClock()))
+  let pTotalFiltered = pipe2 (strWs Keywords.Total >>. pDate) (strWs Keywords.To >>. pDate) (fun min max -> (min, max))
   (pTotalFiltered <|> pTotal) |>> (fun (min, max) -> Total (min, max) |> Show)
-let private pShowCommand = strWs "show" >>. (pAccountsCommand <|> pLastTrnsCommand <|> pTotalCommand)
+let private pShowCommand = strWs Keywords.Show >>. (pAccountsCommand <|> pLastTrnsCommand <|> pTotalCommand)
 
 let private pAddAccountCommand =
-  strWs "add account" >>. pipe3 pName pMoney (opt pMoney) (
+  strWs Keywords.AddAccount >>. pipe3 pName pMoney (opt (strWs Keywords.Credit >>. pMoney)) (
     fun account amount credit -> AddAccount (account, amount, defaultArg credit Amount.zero))
 
 let private pSetCreditLimitCommand =
-  strWs "set account" >>. pipe2 pName pMoney (fun n a -> SetCreditLimit (n, a))
+  strWs Keywords.SetAccount >>. pipe2 pName (strWs Keywords.Credit >>. pMoney) (fun n a -> SetCreditLimit (n, a))
 
 let private pCloseAccountCommand =
-  strWs "close account" >>. pName |>> CloseAccount
+  strWs Keywords.CloseAccount >>. pName |>> CloseAccount
 
 let private pOn =
-  opt (strWs "on" >>. pDate)
+  opt (strWs Keywords.On >>. pDate)
   |>> (fun d ->
     defaultArg (Option.map Clocks.moment d) Clocks.machineClock
     |> On)
-let private pFrom = strWs "from" >>. pName |>> From
-let private pTo = strWs "to" >>. pName |>> To
+let private pFrom = strWs Keywords.From >>. pName |>> From
+let private pTo = strWs Keywords.To >>. pName |>> To
 
 let private pTransferCommand =
-  strWs "transfer" >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Transfer (amount, on, from, t0))
+  strWs Keywords.Transfer >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Transfer (amount, on, from, t0))
 let private pCreditCommand =
-  strWs "credit" >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Credit (amount, on, from, t0))
+  strWs Keywords.Credit >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Credit (amount, on, from, t0))
 let private pDebitCommand =
-  strWs "debit" >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Debit (amount, on, from, t0))
+  strWs Keywords.Debit >>. pipe4 pMoney pOn pFrom pTo (fun amount on from t0 -> Command.Debit (amount, on, from, t0))
 
-let private pUndoCommand = strWs "undo" |>> (fun _ -> Undo)
-let private pRedoCommand = strWs "redo" |>> (fun _ -> Redo)
-let private pHelpCommand = strWs "help" |>> (fun _ -> Help)
-let private pExitCommand = strWs "exit" |>> (fun _ -> Exit)
+let private pUndoCommand = strWs Keywords.Undo |>> (fun _ -> Undo)
+let private pRedoCommand = strWs Keywords.Redo |>> (fun _ -> Redo)
+let private pHelpCommand = strWs Keywords.Help |>> (fun _ -> Help)
+let private pExitCommand = strWs Keywords.Exit |>> (fun _ -> Exit)
 
 let private pCommand =
   pShowCommand <|>

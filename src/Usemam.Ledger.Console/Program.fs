@@ -2,6 +2,7 @@
 
 open Usemam.Ledger.Console.ColorPrint
 open Usemam.Ledger.Console.Command
+open Usemam.Ledger.Console.Editor
 open Usemam.Ledger.Console.Parser
 open Usemam.Ledger.Console.Storage
 open Usemam.Ledger.Console.Services
@@ -17,13 +18,14 @@ let main _ =
         printfn "%s" message
 
     let appState = loadState()
+    let inputEditor = createEditor appState
     
-    let rec readCommandAndRunService stateResult =
+    let rec readCommandAndRunService (stateResult : Result<CommandTracker, string>) =
         let currentResult =
             result {
                 let! state = stateResult
-                cprintf ConsoleColor.Yellow "> "
-                let input = System.Console.In.ReadLine()
+                let! editor = inputEditor
+                let input = editor.ReadLine()
                 let! command = parse input
                 let service = fromCommand command
                 let! newState = service state

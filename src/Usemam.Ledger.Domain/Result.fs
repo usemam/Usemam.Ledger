@@ -13,6 +13,7 @@ type ResultBuilder() =
         | Failure y -> Failure y
     member this.Return(x) = Success x
     member this.ReturnFrom(m) = m
+    member this.Zero(m) = m
 
 module Result =
 

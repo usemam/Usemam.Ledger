@@ -10,6 +10,21 @@ type GetAllAccountsQuery() =
         member this.run state =
             Success (state.accounts |> Seq.filter (fun a -> not a.IsClosed))
 
+type GetAllCategoriesQuery() =
+    interface IQuery<seq<string>> with
+        member this.run state =
+            let add (set : Set<string>) (t : TransactionType) =
+                match t.Description with
+                | Credit (_, source) -> source.ToString() |> set.Add
+                | Debit (_, target) -> target.ToString() |> set.Add
+                | _ -> failwith "Only credit and debit transactions supported."
+            let aggregate () =
+                state.transactions
+                |> Seq.filter (fun t -> t |> Transaction.isTransfer |> not)
+                |> Seq.fold add Set.empty
+                |> seq
+            tryCatch aggregate ()
+
 type GetLastNTransactionsQuery(n : int, accountName : string) =
     interface IQuery<seq<TransactionType>> with
         member this.run state =
@@ -44,10 +59,6 @@ type GetTotalsQuery(startDate : DateTimeOffset, endDate : DateTimeOffset) =
                 map'.Add (name, amount)
             let aggregate () =
                 state.transactions.between startDate endDate
-                |> Seq.filter (fun t ->
-                    match t.Description with
-                    | Credit _ -> true
-                    | Debit _ -> true
-                    | _ -> false)
+                |> Seq.filter (fun t -> t |> Transaction.isTransfer |> not)
                 |> Seq.fold addOrUpdate Map.empty
             tryCatch aggregate ()

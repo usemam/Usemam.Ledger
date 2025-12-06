@@ -13,7 +13,7 @@ let query q (tracker : CommandTracker) =
             let! queryResult = queryObj.run tracker.state
             return queryResult |> Seq.iteri (fun i a -> printfn "%i. %O" (i+1) a)
         }
-    
+
     let showTransactions n accountName =
         result {
             let queryObj = GetLastNTransactionsQuery (n, accountName) :> IQuery<seq<TransactionType>>
