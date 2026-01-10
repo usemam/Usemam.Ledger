@@ -1,4 +1,4 @@
-﻿open System
+open System
 
 open Usemam.Ledger.Console.ColorPrint
 open Usemam.Ledger.Console.Command
@@ -40,8 +40,4 @@ let main _ =
 
     readCommandAndRunService appState
 
-    match backup() with
-    | Success _ -> printfn "%s" "Backup finished"
-    | Failure m -> printfn "%s" m
-        
     0 // return an integer exit code

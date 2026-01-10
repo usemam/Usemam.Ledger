@@ -6,7 +6,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Usemam.Ledger.CommandLine\Usemam.Ledger.CommandLine.csproj" />
     <ProjectReference Include="..\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj" />
-    <ProjectReference Include="..\Usemam.Ledger.Backup\Usemam.Ledger.Backup.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="console_commands.txt" />
