@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal finance ledger application written primarily in F# with a C# component for console input handling. Tracks accounts, transactions (credits, debits, transfers), and supports cloud backup to Dropbox.
+Personal finance ledger application written primarily in F# with a C# component for console input handling. Tracks accounts, transactions (credits, debits, transfers).
 
 ## Build & Test Commands
 
@@ -29,7 +29,6 @@ dotnet run --project src/Usemam.Ledger.Console/Usemam.Ledger.Console.fsproj
 - **Usemam.Ledger.Domain** (F#, .NET Standard 2.0) - Core domain models and business logic
 - **Usemam.Ledger.Console** (F#, .NET 9.0) - Main executable with CLI parser and services
 - **Usemam.Ledger.CommandLine** (C#, .NET 9.0) - Rich console input with history and autocomplete
-- **Usemam.Ledger.Backup** (F#, .NET Standard 2.0) - Dropbox backup integration
 - **Usemam.Ledger.Learning** (F#, .NET Standard 2.0) - Naive Bayes transaction classifier
 
 ### Key Patterns
@@ -59,5 +58,4 @@ Uses xUnit with FsCheck for property-based testing. Tests use custom `Arb` gener
 ## Configuration
 
 `appsettings.json` contains:
-- Dropbox access token for backup feature
 - File paths for data storage
