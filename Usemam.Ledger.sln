@@ -1,20 +1,25 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6F4661DC-6921-4F37-8B01-F8DBA00C85FF}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Console", "src/Usemam.Ledger.Console/Usemam.Ledger.Console.fsproj", "{38E8A95B-E6A0-4D06-BE4D-6659C18A612C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Console", "src\Usemam.Ledger.Console\Usemam.Ledger.Console.fsproj", "{38E8A95B-E6A0-4D06-BE4D-6659C18A612C}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain", "src/Usemam.Ledger.Domain/Usemam.Ledger.Domain.fsproj", "{E48B9554-56F9-404A-8280-E0BBC81CD037}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain", "src\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj", "{E48B9554-56F9-404A-8280-E0BBC81CD037}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E2E79C85-E4B1-4D0C-B415-0E1AD287B791}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain.Tests", "tests/Usemam.Ledger.Domain.Tests/Usemam.Ledger.Domain.Tests.fsproj", "{B708EBD7-D9D0-4C3B-84D5-A4DED876ACB6}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Domain.Tests", "tests\Usemam.Ledger.Domain.Tests\Usemam.Ledger.Domain.Tests.fsproj", "{B708EBD7-D9D0-4C3B-84D5-A4DED876ACB6}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Learning", "src/Usemam.Ledger.Learning/Usemam.Ledger.Learning.fsproj", "{A87B375E-0E50-4841-9398-EA3EF6FC941C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Usemam.Ledger.Learning", "src\Usemam.Ledger.Learning\Usemam.Ledger.Learning.fsproj", "{A87B375E-0E50-4841-9398-EA3EF6FC941C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.CommandLine", "src/Usemam.Ledger.CommandLine/Usemam.Ledger.CommandLine.csproj", "{F182AEB8-AA88-4F97-8883-F3D1491A7583}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usemam.Ledger.CommandLine", "src\Usemam.Ledger.CommandLine\Usemam.Ledger.CommandLine.csproj", "{F182AEB8-AA88-4F97-8883-F3D1491A7583}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Persistence.Json", "src\Usemam.Ledger.Persistence.Json\Usemam.Ledger.Persistence.Json.fsproj", "{2CFDC9D3-514B-4220-856E-BFE3771E502A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Usemam.Ledger.Persistence.Mongo", "src\Usemam.Ledger.Persistence.Mongo\Usemam.Ledger.Persistence.Mongo.fsproj", "{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +91,30 @@ Global
 		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x64.Build.0 = Release|Any CPU
 		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x86.ActiveCfg = Release|Any CPU
 		{F182AEB8-AA88-4F97-8883-F3D1491A7583}.Release|x86.Build.0 = Release|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Debug|x64.Build.0 = Debug|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Debug|x86.Build.0 = Debug|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Release|x64.ActiveCfg = Release|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Release|x64.Build.0 = Release|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Release|x86.ActiveCfg = Release|Any CPU
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A}.Release|x86.Build.0 = Release|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Debug|x64.Build.0 = Debug|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Debug|x86.Build.0 = Debug|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Release|x64.ActiveCfg = Release|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Release|x64.Build.0 = Release|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Release|x86.ActiveCfg = Release|Any CPU
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +125,8 @@ Global
 		{B708EBD7-D9D0-4C3B-84D5-A4DED876ACB6} = {E2E79C85-E4B1-4D0C-B415-0E1AD287B791}
 		{A87B375E-0E50-4841-9398-EA3EF6FC941C} = {6F4661DC-6921-4F37-8B01-F8DBA00C85FF}
 		{F182AEB8-AA88-4F97-8883-F3D1491A7583} = {6F4661DC-6921-4F37-8B01-F8DBA00C85FF}
+		{2CFDC9D3-514B-4220-856E-BFE3771E502A} = {6F4661DC-6921-4F37-8B01-F8DBA00C85FF}
+		{19F601E4-DAD3-43FC-A5F3-6B7864D7C85F} = {6F4661DC-6921-4F37-8B01-F8DBA00C85FF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54917C5F-3685-411E-A09E-2455181EA13E}

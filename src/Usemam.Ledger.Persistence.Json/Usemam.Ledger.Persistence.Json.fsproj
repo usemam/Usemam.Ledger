@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="IJsonConfig.fs" />
+    <Compile Include="AccountsInMemory.fs" />
+    <Compile Include="TransactionsInMemory.fs" />
+    <Compile Include="JsonContext.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+</Project>
