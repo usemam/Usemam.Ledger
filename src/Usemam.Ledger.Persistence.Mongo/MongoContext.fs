@@ -9,14 +9,14 @@ type MongoContext(config : IMongoConfig) =
 
     let client = MongoClient(config.MongoConnectionString)
     let database = client.GetDatabase(config.MongoDatabaseName)
-    let accountsCollection = database.GetCollection<AccountType>("accounts")
-    let transactionsCollection = database.GetCollection<TransactionType>("transactions")
+    let accountsCollection = database.GetCollection<AccountDocument>("accounts")
+    let transactionsCollection = database.GetCollection<TransactionDocument>("transactions")
 
     member this.LoadState() =
         result {
-            let accounts = AccountsMongo(accountsCollection) :> Account.IAccounts
-            let transactions = TransactionsMongo(transactionsCollection) :> Transaction.ITransactions
-            let state = State(accounts, transactions)
+            let accountsMongo = AccountsMongo(accountsCollection)
+            let transactionsMongo = TransactionsMongo(transactionsCollection, accountsMongo)
+            let state = State(accountsMongo :> Account.IAccounts, transactionsMongo :> Transaction.ITransactions)
             return CommandTracker(state, [], [])
         }
 

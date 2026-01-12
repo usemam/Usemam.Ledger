@@ -4,6 +4,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="IMongoConfig.fs" />
+    <Compile Include="Documents.fs" />
+    <Compile Include="Mapping.fs" />
     <Compile Include="AccountsMongo.fs" />
     <Compile Include="TransactionsMongo.fs" />
     <Compile Include="MongoContext.fs" />
