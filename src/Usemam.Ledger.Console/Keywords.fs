@@ -54,9 +54,16 @@ let Transfer = "transfer"
 [<Literal>]
 let Undo = "undo"
 
+[<Literal>]
+let Restore = "restore"
+
+[<Literal>]
+let Backup = "backup"
+
 let AllKeywords = [
     Accounts
     AddAccount
+    Backup
     CloseAccount
     Credit
     Debit
@@ -67,6 +74,7 @@ let AllKeywords = [
     Last
     On
     Redo
+    Restore
     SetAccount
     Show
     To

@@ -248,3 +248,6 @@ transactions.db
 
 # Rider
 .idea
+
+# Claude code
+.claude

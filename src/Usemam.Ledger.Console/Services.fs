@@ -5,6 +5,7 @@ open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 open Usemam.Ledger.Domain.Queries
 open Usemam.Ledger.Domain.Commands
+open Usemam.Ledger.Persistence.Mongo
 
 let query q (tracker : CommandTracker) =
     let showAccounts () =
@@ -85,6 +86,31 @@ let exit (tracker : CommandTracker) =
         return tracker
     }
 
+let restore (tracker : CommandTracker) =
+    result {
+        match Storage.getConfig() with
+        | Some config ->
+            let reportStatus msg = printfn "%s" msg
+            let reportProgress msg =
+                printf "\r%-60s" msg
+                System.Console.Out.Flush()
+            let! _ = DataMigration.restore config reportStatus reportProgress
+            return tracker
+        | None ->
+            return! Failure "Configuration not loaded"
+    }
+
+let backup (tracker : CommandTracker) =
+    result {
+        match Storage.getConfig() with
+        | Some config ->
+            let reportStatus msg = printfn "%s" msg
+            let! _ = DataMigration.backup config reportStatus
+            return tracker
+        | None ->
+            return! Failure "Configuration not loaded"
+    }
+
 let fromCommand (command : Command) =
     match command with
     | Show q -> query q
@@ -101,3 +127,5 @@ let fromCommand (command : Command) =
     | Redo -> redo
     | Help -> help
     | Exit -> exit
+    | Restore -> restore
+    | Backup -> backup

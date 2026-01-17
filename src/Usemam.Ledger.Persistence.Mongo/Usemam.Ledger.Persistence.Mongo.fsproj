@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="IMongoConfig.fs" />
+    <Compile Include="Documents.fs" />
+    <Compile Include="Mapping.fs" />
+    <Compile Include="AccountsMongo.fs" />
+    <Compile Include="TransactionsMongo.fs" />
+    <Compile Include="MongoContext.fs" />
+    <Compile Include="DataMigration.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj" />
+    <ProjectReference Include="..\Usemam.Ledger.Persistence.Json\Usemam.Ledger.Persistence.Json.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+</Project>

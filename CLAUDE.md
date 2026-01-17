@@ -26,9 +26,11 @@ dotnet run --project src/Usemam.Ledger.Console/Usemam.Ledger.Console.fsproj
 
 ### Solution Structure
 
-- **Usemam.Ledger.Domain** (F#, .NET Standard 2.0) - Core domain models and business logic
+- **Usemam.Ledger.Domain** (F#, .NET Standard 2.0) - Core domain models, interfaces (`IAccounts`, `ITransactions`), and business logic
 - **Usemam.Ledger.Console** (F#, .NET 9.0) - Main executable with CLI parser and services
 - **Usemam.Ledger.CommandLine** (C#, .NET 9.0) - Rich console input with history and autocomplete
+- **Usemam.Ledger.Persistence.Json** (F#, .NET 9.0) - JSON file-based persistence with in-memory collections
+- **Usemam.Ledger.Persistence.Mongo** (F#, .NET 9.0) - MongoDB persistence with immediate writes
 - **Usemam.Ledger.Learning** (F#, .NET Standard 2.0) - Naive Bayes transaction classifier
 
 ### Key Patterns
@@ -41,15 +43,17 @@ dotnet run --project src/Usemam.Ledger.Console/Usemam.Ledger.Console.fsproj
 
 **Parser Combinators:** FParsec library used in `Parser.fs` for natural language command parsing (e.g., "transfer 100 from checking to savings").
 
+**Persistence Abstraction:** Domain defines `IAccounts` and `ITransactions` interfaces. Two implementations exist:
+- `JsonContext` - Loads/saves JSON files, uses in-memory collections during runtime, persists on exit
+- `MongoContext` - Connects to MongoDB, persists changes immediately via `AccountsMongo`/`TransactionsMongo`
+
+Storage type selected via `StorageType` in `appsettings.json` ("json" or "mongo").
+
 ### Domain Types
 
 - `Money` = Amount + Currency (USD only)
 - `Account` = Name, Balance, CreditLimit, Created, IsClosed
 - `Transaction` = Date, Sum, Description (variants: Transfer, Credit, Debit)
-
-### Data Persistence
-
-JSON files (`accounts.db`, `transactions.db`) serialized with Newtonsoft.Json. Loaded at startup, saved on exit.
 
 ## Testing
 
@@ -58,4 +62,6 @@ Uses xUnit with FsCheck for property-based testing. Tests use custom `Arb` gener
 ## Configuration
 
 `appsettings.json` contains:
-- File paths for data storage
+- `StorageType`: "json" (default) or "mongo"
+- `AccountsFilePath`, `TransactionsFilePath`: Paths for JSON storage
+- `MongoConnectionString`, `MongoDatabaseName`: MongoDB connection settings
