@@ -90,8 +90,11 @@ let restore (tracker : CommandTracker) =
     result {
         match Storage.getConfig() with
         | Some config ->
-            let! _ = DataMigration.restore config
-            printfn "Data restored from JSON files to MongoDB."
+            let reportStatus msg = printfn "%s" msg
+            let reportProgress msg =
+                printf "\r%-60s" msg
+                System.Console.Out.Flush()
+            let! _ = DataMigration.restore config reportStatus reportProgress
             return tracker
         | None ->
             return! Failure "Configuration not loaded"
@@ -101,8 +104,8 @@ let backup (tracker : CommandTracker) =
     result {
         match Storage.getConfig() with
         | Some config ->
-            let! _ = DataMigration.backup config
-            printfn "Data backed up from MongoDB to JSON files."
+            let reportStatus msg = printfn "%s" msg
+            let! _ = DataMigration.backup config reportStatus
             return tracker
         | None ->
             return! Failure "Configuration not loaded"
