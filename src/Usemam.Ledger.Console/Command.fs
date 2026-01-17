@@ -27,6 +27,8 @@ type Command =
     | Redo
     | Help
     | Exit
+    | Restore
+    | Backup
 
 let isExit command =
     match command with

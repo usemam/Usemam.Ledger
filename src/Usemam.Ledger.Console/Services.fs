@@ -5,6 +5,7 @@ open Usemam.Ledger.Domain
 open Usemam.Ledger.Domain.Result
 open Usemam.Ledger.Domain.Queries
 open Usemam.Ledger.Domain.Commands
+open Usemam.Ledger.Persistence.Mongo
 
 let query q (tracker : CommandTracker) =
     let showAccounts () =
@@ -85,6 +86,28 @@ let exit (tracker : CommandTracker) =
         return tracker
     }
 
+let restore (tracker : CommandTracker) =
+    result {
+        match Storage.getConfig() with
+        | Some config ->
+            let! _ = DataMigration.restore config
+            printfn "Data restored from JSON files to MongoDB."
+            return tracker
+        | None ->
+            return! Failure "Configuration not loaded"
+    }
+
+let backup (tracker : CommandTracker) =
+    result {
+        match Storage.getConfig() with
+        | Some config ->
+            let! _ = DataMigration.backup config
+            printfn "Data backed up from MongoDB to JSON files."
+            return tracker
+        | None ->
+            return! Failure "Configuration not loaded"
+    }
+
 let fromCommand (command : Command) =
     match command with
     | Show q -> query q
@@ -101,3 +124,5 @@ let fromCommand (command : Command) =
     | Redo -> redo
     | Help -> help
     | Exit -> exit
+    | Restore -> restore
+    | Backup -> backup

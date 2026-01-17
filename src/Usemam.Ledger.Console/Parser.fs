@@ -63,6 +63,8 @@ let private pUndoCommand = strWs Keywords.Undo |>> (fun _ -> Undo)
 let private pRedoCommand = strWs Keywords.Redo |>> (fun _ -> Redo)
 let private pHelpCommand = strWs Keywords.Help |>> (fun _ -> Help)
 let private pExitCommand = strWs Keywords.Exit |>> (fun _ -> Exit)
+let private pRestoreCommand = strWs Keywords.Restore |>> (fun _ -> Restore)
+let private pBackupCommand = strWs Keywords.Backup |>> (fun _ -> Backup)
 
 let private pCommand =
   pShowCommand <|>
@@ -75,7 +77,9 @@ let private pCommand =
   pUndoCommand <|>
   pRedoCommand <|>
   pHelpCommand <|>
-  pExitCommand
+  pExitCommand <|>
+  pRestoreCommand <|>
+  pBackupCommand
 
 let parse input =
   match run pCommand input with

@@ -21,6 +21,7 @@ type StorageConfiguration =
     interface IMongoConfig with
         member this.MongoConnectionString = this.MongoConnectionString
         member this.MongoDatabaseName = this.MongoDatabaseName
+    interface DataMigration.IMigrationConfig
 
 let private loadStorageConfiguration () =
     let loadConfig () =
@@ -62,3 +63,5 @@ let saveState (state : State) =
             context.SaveState(state)
     | None ->
         Failure "Configuration not loaded"
+
+let getConfig () = currentConfig
