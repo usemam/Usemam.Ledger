@@ -1,0 +1,538 @@
+/* ==========================================
+   App Layout & Components
+   ========================================== */
+
+/* Main App Container */
+.app {
+  min-height: 100vh;
+  background-color: var(--paper-cream);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: -1px -1px;
+}
+
+.app-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-md);
+}
+
+/* Responsive padding */
+@media (min-width: 768px) {
+  .app-content {
+    padding: var(--space-lg) var(--space-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-content {
+    padding: var(--space-xl) var(--space-2xl);
+  }
+}
+
+/* ==========================================
+   Header
+   ========================================== */
+
+header {
+  background-color: var(--paper-aged);
+  border-bottom: 2px solid var(--margin-line);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+header h1 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  color: var(--ink-primary);
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 768px) {
+  header {
+    padding: var(--space-lg) var(--space-xl);
+  }
+
+  header h1 {
+    font-size: var(--text-3xl);
+  }
+}
+
+/* ==========================================
+   Main Content
+   ========================================== */
+
+main {
+  min-height: 400px;
+  padding: 0 var(--space-md);
+}
+
+@media (min-width: 768px) {
+  main {
+    padding: 0 var(--space-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  main {
+    padding: 0 var(--space-2xl);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* ==========================================
+   Account List
+   ========================================== */
+
+.account-list {
+  margin-bottom: var(--space-xl);
+}
+
+.account-list h2 {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--paper-shadow);
+  color: var(--ink-primary);
+}
+
+/* Account Grid - Responsive */
+.account-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 480px) {
+  .account-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .account-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+}
+
+@media (min-width: 1280px) {
+  .account-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ==========================================
+   Account Card
+   ========================================== */
+
+.account-card {
+  background-color: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-left: 3px solid var(--margin-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-paper);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.account-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.account-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--ink-light);
+}
+
+.account-card:hover::before {
+  opacity: 1;
+}
+
+.account-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.account-card h3 {
+  margin: 0 0 var(--space-sm) 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  color: var(--ink-primary);
+}
+
+.account-balance {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  margin: var(--space-sm) 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.account-credit,
+.account-created {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+  margin-top: var(--space-xs);
+}
+
+.account-created {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed var(--paper-shadow);
+}
+
+/* ==========================================
+   Account Details Page
+   ========================================== */
+
+.account-details {
+  max-width: 900px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  color: var(--accent-rust);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--accent-burgundy);
+  background-color: var(--paper-aged);
+}
+
+.account-details h2 {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--margin-line);
+}
+
+/* Account Info Card */
+.account-info {
+  background: var(--paper-aged);
+  border: 1px solid var(--paper-shadow);
+  border-left: 3px solid var(--margin-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px dashed var(--paper-shadow);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-row:first-child {
+  padding-top: 0;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: var(--ink-secondary);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+  .info-row .label {
+    min-width: 120px;
+  }
+}
+
+.status-open {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.status-closed {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+/* ==========================================
+   Transaction List
+   ========================================== */
+
+.transaction-section h3 {
+  margin-bottom: var(--space-md);
+  color: var(--ink-secondary);
+  font-size: var(--text-lg);
+}
+
+.transaction-list {
+  background: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Desktop Table View */
+.transaction-table {
+  display: none;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .transaction-table {
+    display: table;
+  }
+
+  .transaction-cards {
+    display: none;
+  }
+}
+
+.transaction-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-list th {
+  background: var(--paper-aged);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-md);
+  text-align: left;
+  border-bottom: 2px solid var(--paper-shadow);
+}
+
+.transaction-list td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--paper-shadow);
+  font-size: var(--text-sm);
+}
+
+.transaction-list .amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Transaction Row Types */
+.transaction-row {
+  transition: background-color var(--transition-fast);
+}
+
+.transaction-row:hover {
+  background-color: var(--paper-aged);
+}
+
+.transaction-transfer {
+  background-color: var(--transfer-bg);
+}
+
+.transaction-transfer:hover {
+  background-color: #EDE8DA;
+}
+
+.transaction-credit {
+  background-color: var(--credit-bg);
+}
+
+.transaction-credit:hover {
+  background-color: #DCE8D9;
+}
+
+.transaction-debit {
+  background-color: var(--debit-bg);
+}
+
+.transaction-debit:hover {
+  background-color: #EBDAD8;
+}
+
+/* Mobile Card View */
+.transaction-cards {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .transaction-cards {
+    display: none;
+  }
+}
+
+.transaction-card {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--paper-shadow);
+}
+
+.transaction-card:last-child {
+  border-bottom: none;
+}
+
+.transaction-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-sm);
+}
+
+.transaction-card-date {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+}
+
+.transaction-card-type {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.transaction-card-type.transfer {
+  background-color: var(--transfer-bg);
+  color: var(--transfer-text);
+}
+
+.transaction-card-type.credit {
+  background-color: var(--credit-bg);
+  color: var(--credit-text);
+}
+
+.transaction-card-type.debit {
+  background-color: var(--debit-bg);
+  color: var(--debit-text);
+}
+
+.transaction-card-description {
+  font-size: var(--text-sm);
+  color: var(--ink-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.transaction-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-card-amount {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.transaction-card-notes {
+  font-size: var(--text-xs);
+  color: var(--ink-light);
+  font-style: italic;
+}
+
+/* ==========================================
+   Money Display
+   ========================================== */
+
+.money {
+  font-variant-numeric: tabular-nums;
+}
+
+.money-positive {
+  color: var(--success);
+}
+
+.money-negative {
+  color: var(--danger);
+}
+
+/* ==========================================
+   States
+   ========================================== */
+
+.loading,
+.error,
+.empty {
+  padding: var(--space-2xl);
+  text-align: center;
+  border-radius: var(--radius-md);
+}
+
+.loading {
+  color: var(--ink-secondary);
+  background-color: var(--paper-aged);
+}
+
+.error {
+  color: var(--danger);
+  background-color: var(--debit-bg);
+  border: 1px solid var(--danger);
+}
+
+.empty {
+  color: var(--ink-light);
+  background-color: var(--paper-aged);
+  border: 1px dashed var(--paper-shadow);
+}
+
+/* ==========================================
+   Responsive Utilities
+   ========================================== */
+
+/* Hide on mobile */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* Touch-friendly targets on mobile */
+@media (max-width: 767px) {
+  .account-card,
+  .back-link,
+  button {
+    min-height: 44px;
+  }
+
+  .account-card a {
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
