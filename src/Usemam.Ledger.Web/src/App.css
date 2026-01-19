@@ -86,18 +86,71 @@ main {
 }
 
 /* ==========================================
+   Tab Navigation
+   ========================================== */
+
+.main-page {
+  margin-bottom: var(--space-xl);
+}
+
+.tab-nav {
+  display: flex;
+  gap: var(--space-xs);
+  border-bottom: 2px solid var(--paper-shadow);
+  margin-bottom: var(--space-lg);
+}
+
+.tab-button {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  color: var(--ink-light);
+  background: none;
+  border: none;
+  padding: var(--space-sm) var(--space-lg);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.tab-button:hover {
+  color: var(--ink-secondary);
+}
+
+.tab-button.active {
+  color: var(--ink-primary);
+  font-weight: 600;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--margin-line);
+}
+
+.tab-content {
+  min-height: 200px;
+}
+
+.reports-placeholder {
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--ink-light);
+  background-color: var(--paper-aged);
+  border: 1px dashed var(--paper-shadow);
+  border-radius: var(--radius-md);
+  font-style: italic;
+}
+
+/* ==========================================
    Account List
    ========================================== */
 
 .account-list {
   margin-bottom: var(--space-xl);
-}
-
-.account-list h2 {
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--paper-shadow);
-  color: var(--ink-primary);
 }
 
 /* Account Grid - Responsive */
@@ -535,4 +588,319 @@ main {
     flex-direction: column;
     justify-content: center;
   }
+}
+
+/* ==========================================
+   Spending Report
+   ========================================== */
+
+.spending-report {
+  margin-bottom: var(--space-xl);
+}
+
+/* Year Navigator */
+.year-navigator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-md);
+  background-color: var(--paper-aged);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-md);
+}
+
+.year-nav-button {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  color: var(--ink-primary);
+  background: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.year-nav-button:hover:not(:disabled) {
+  background-color: var(--paper-aged);
+  border-color: var(--ink-light);
+}
+
+.year-nav-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.year-display {
+  font-family: var(--font-serif);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--ink-primary);
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Spending Table - Desktop */
+.spending-table-wrapper {
+  overflow-x: auto;
+  background: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.spending-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.spending-table th {
+  background: var(--paper-aged);
+  font-weight: 600;
+  color: var(--ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-sm) var(--space-xs);
+  text-align: right;
+  border-bottom: 2px solid var(--paper-shadow);
+  white-space: nowrap;
+}
+
+.spending-table th:first-child {
+  text-align: left;
+  padding-left: var(--space-md);
+}
+
+.spending-table td {
+  padding: var(--space-sm) var(--space-xs);
+  border-bottom: 1px solid var(--paper-shadow);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.spending-table td:first-child {
+  text-align: left;
+  padding-left: var(--space-md);
+}
+
+.spending-category-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.spending-category-type {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
+  color: var(--ink-light);
+  background-color: var(--paper-shadow);
+}
+
+.spending-row-income .spending-category-type {
+  background-color: var(--credit-bg);
+  color: var(--credit-text);
+}
+
+.spending-row-expense .spending-category-type {
+  background-color: var(--debit-bg);
+  color: var(--debit-text);
+}
+
+/* Spending Cell Colors */
+.spending-cell {
+  font-variant-numeric: tabular-nums;
+}
+
+.spending-cell-positive {
+  background-color: var(--credit-bg);
+  color: var(--credit-text);
+}
+
+.spending-cell-negative {
+  background-color: var(--debit-bg);
+  color: var(--debit-text);
+}
+
+.spending-cell-zero {
+  background-color: var(--paper-cream);
+  color: var(--ink-light);
+}
+
+/* Totals Row */
+.spending-totals-row {
+  background-color: var(--paper-aged);
+  font-weight: 600;
+}
+
+.spending-totals-row td {
+  border-top: 2px solid var(--paper-shadow);
+}
+
+/* Spending Cards - Mobile */
+.spending-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.category-card {
+  background: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-left: 3px solid var(--margin-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.category-card-income {
+  border-left-color: var(--success);
+}
+
+.category-card-expense {
+  border-left-color: var(--danger);
+}
+
+.category-card-totals {
+  border-left-color: var(--accent-rust);
+  background: var(--paper-aged);
+}
+
+.category-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.category-name {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.category-type {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
+}
+
+.category-type-income {
+  background-color: var(--credit-bg);
+  color: var(--credit-text);
+}
+
+.category-type-expense {
+  background-color: var(--debit-bg);
+  color: var(--debit-text);
+}
+
+.category-card-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px dashed var(--paper-shadow);
+  margin-bottom: var(--space-sm);
+}
+
+.total-label {
+  font-weight: 500;
+  color: var(--ink-secondary);
+}
+
+.category-monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+}
+
+@media (min-width: 480px) {
+  .category-monthly-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.monthly-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-xs);
+  background: var(--paper-aged);
+  border-radius: var(--radius-sm);
+}
+
+.month-name {
+  font-size: var(--text-xs);
+  color: var(--ink-light);
+  text-transform: uppercase;
+}
+
+/* Value Colors */
+.spending-value-positive {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.spending-value-negative {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.spending-value-zero {
+  color: var(--ink-light);
+}
+
+/* ==========================================
+   Report Cards Grid
+   ========================================== */
+
+.reports-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 480px) {
+  .reports-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.report-card {
+  background-color: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-left: 3px solid var(--margin-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-paper);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.report-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--ink-light);
+}
+
+.report-card h3 {
+  margin: 0 0 var(--space-sm) 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  color: var(--ink-primary);
+}
+
+.report-card-description {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
 }

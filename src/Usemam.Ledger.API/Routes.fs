@@ -10,7 +10,7 @@ let webApp : HttpHandler =
             route "/api/accounts" >=> getAllAccounts
             routef "/api/accounts/%s/transactions" getTransactionsForAccount
             routef "/api/accounts/%s" getAccountByName
-            route "/api/transactions" >=> getAllTransactions
+            routef "/api/reports/spending/%i" getSpendingReport
         ]
         RequestErrors.notFound (text "Not Found")
     ]

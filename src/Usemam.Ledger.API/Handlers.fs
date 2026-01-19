@@ -5,6 +5,7 @@ open Microsoft.AspNetCore.Http
 open Giraffe
 
 open Usemam.Ledger.Domain
+open Usemam.Ledger.Domain.Transaction
 open Usemam.Ledger.API.Dtos
 open Usemam.Ledger.API.StateService
 
@@ -50,26 +51,59 @@ let getTransactionsForAccount (name: string) : HttpHandler =
                 |> Seq.toList
             json transactions next ctx
 
-let getAllTransactions : HttpHandler =
+let getSpendingReport (year: int) : HttpHandler =
     fun next ctx ->
         let stateService = getStateService ctx
         let state = stateService.GetState()
 
-        let startParam = ctx.TryGetQueryStringValue "start"
-        let endParam = ctx.TryGetQueryStringValue "end"
+        let startDate = DateTimeOffset(year, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        let endDate = DateTimeOffset(year, 12, 31, 23, 59, 59, TimeSpan.Zero)
 
         let transactions =
-            match startParam, endParam with
-            | Some startStr, Some endStr ->
-                match DateTimeOffset.TryParse(startStr), DateTimeOffset.TryParse(endStr) with
-                | (true, startDate), (true, endDate) ->
-                    state.transactions.between startDate endDate
-                | _ -> state.transactions :> seq<_>
-            | _ -> state.transactions :> seq<_>
-
-        let transactionDtos =
-            transactions
-            |> Seq.map Mapping.toTransactionDto
+            state.transactions.between startDate endDate
+            |> Seq.filter (fun t -> not (Transaction.isTransfer t))
             |> Seq.toList
 
-        json transactionDtos next ctx
+        // Collect all transactions with category and signed amount (positive for income, negative for expense)
+        let allCategoryTransactions =
+            transactions
+            |> List.choose (fun t ->
+                match t.Description with
+                | Credit (_, CreditSource source) ->
+                    Some (source, t.Date.Month, t.Sum.Amount.Value)  // positive for income
+                | Debit (_, DebitTarget target) ->
+                    Some (target, t.Date.Month, -t.Sum.Amount.Value)  // negative for expense
+                | _ -> None)
+
+        // Group by category name and calculate net monthly amounts
+        let allCategories =
+            allCategoryTransactions
+            |> List.groupBy (fun (category, _, _) -> category)
+            |> List.map (fun (category, items) ->
+                let monthlyAmounts = Array.create 12 0m
+                for (_, month, amount) in items do
+                    monthlyAmounts.[month - 1] <- monthlyAmounts.[month - 1] + amount
+                let yearTotal = Array.sum monthlyAmounts
+                {
+                    Category = category
+                    MonthlyAmounts = monthlyAmounts
+                    YearTotal = yearTotal
+                } : CategorySpendingDto)
+            |> List.sortBy (fun c -> c.Category)
+            |> List.toArray
+
+        let monthlyTotals = Array.create 12 0m
+        for category in allCategories do
+            for i in 0..11 do
+                monthlyTotals.[i] <- monthlyTotals.[i] + category.MonthlyAmounts.[i]
+
+        let yearlyNet = Array.sum monthlyTotals
+
+        let report : SpendingReportDto = {
+            Year = year
+            Categories = allCategories
+            MonthlyTotals = monthlyTotals
+            YearlyNet = yearlyNet
+        }
+
+        json report next ctx

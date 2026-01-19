@@ -21,3 +21,16 @@ export interface TransactionDto {
   debitTarget: string | null;
   description: string | null;
 }
+
+export interface CategorySpendingDto {
+  category: string;
+  monthlyAmounts: number[];
+  yearTotal: number;
+}
+
+export interface SpendingReportDto {
+  year: number;
+  categories: CategorySpendingDto[];
+  monthlyTotals: number[];
+  yearlyNet: number;
+}

@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { AccountList } from "./components/AccountList";
+import { MainPage } from "./components/MainPage";
 import { AccountDetails } from "./components/AccountDetails";
 import "./App.css";
 
@@ -11,7 +11,7 @@ function App() {
       </header>
       <main>
         <Routes>
-          <Route path="/" element={<AccountList />} />
+          <Route path="/" element={<MainPage />} />
           <Route path="/accounts/:name" element={<AccountDetails />} />
         </Routes>
       </main>

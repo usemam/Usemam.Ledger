@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useAccount } from "../hooks/useAccounts";
-import { useAccountTransactions } from "../hooks/useTransactions";
+import { useAccount, useAccountTransactions } from "../hooks/useAccounts";
 import { Money } from "./Money";
 import { TransactionList } from "./TransactionList";
 

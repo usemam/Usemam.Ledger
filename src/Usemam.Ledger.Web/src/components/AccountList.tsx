@@ -20,7 +20,6 @@ export function AccountList() {
 
   return (
     <div className="account-list">
-      <h2>Accounts</h2>
       <div className="account-grid">
         {accounts.map((account) => (
           <AccountCard key={account.name} account={account} />

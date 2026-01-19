@@ -70,3 +70,20 @@ module Mapping =
             DebitTarget = debitTarget
             Description = transaction.TextDescription
         }
+
+[<CLIMutable>]
+type CategorySpendingDto =
+    {
+        Category: string
+        MonthlyAmounts: decimal array
+        YearTotal: decimal
+    }
+
+[<CLIMutable>]
+type SpendingReportDto =
+    {
+        Year: int
+        Categories: CategorySpendingDto array
+        MonthlyTotals: decimal array
+        YearlyNet: decimal
+    }

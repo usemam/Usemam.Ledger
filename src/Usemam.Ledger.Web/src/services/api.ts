@@ -1,4 +1,4 @@
-import type { AccountDto, TransactionDto } from "../types/api";
+import type { AccountDto, SpendingReportDto, TransactionDto } from "../types/api";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -28,17 +28,8 @@ export async function getTransactionsForAccount(
   );
 }
 
-export async function getTransactions(
-  startDate?: string,
-  endDate?: string
-): Promise<TransactionDto[]> {
-  let url = `${API_BASE_URL}/api/transactions`;
-  const params = new URLSearchParams();
-  if (startDate) params.append("start", startDate);
-  if (endDate) params.append("end", endDate);
-  const queryString = params.toString();
-  if (queryString) {
-    url += `?${queryString}`;
-  }
-  return fetchJson<TransactionDto[]>(url);
+export async function getSpendingReport(year: number): Promise<SpendingReportDto> {
+  return fetchJson<SpendingReportDto>(
+    `${API_BASE_URL}/api/reports/spending/${year}`
+  );
 }
