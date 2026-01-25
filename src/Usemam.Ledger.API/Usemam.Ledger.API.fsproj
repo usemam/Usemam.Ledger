@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj" />
+    <ProjectReference Include="..\Usemam.Ledger.Persistence.Json\Usemam.Ledger.Persistence.Json.fsproj" />
+    <ProjectReference Include="..\Usemam.Ledger.Persistence.Mongo\Usemam.Ledger.Persistence.Mongo.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dtos.fs" />
+    <Compile Include="StateService.fs" />
+    <Compile Include="Handlers.fs" />
+    <Compile Include="Routes.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Giraffe" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+  </ItemGroup>
+</Project>
