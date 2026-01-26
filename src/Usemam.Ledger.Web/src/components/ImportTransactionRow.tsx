@@ -7,6 +7,7 @@ interface ImportTransaction {
   category: string;
   isCredit: boolean;
   isDuplicate: boolean;
+  isTransfer: boolean;
   selected: boolean;
 }
 
@@ -52,17 +53,21 @@ export function ImportTransactionRow({
         )}
       </td>
       <td className="import-cell category-cell">
-        <select
-          value={transaction.category}
-          onChange={(e) => onCategoryChange(index, e.target.value)}
-          className="category-select"
-        >
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        {transaction.isTransfer ? (
+          <span className="payment-label">Payment</span>
+        ) : (
+          <select
+            value={transaction.category}
+            onChange={(e) => onCategoryChange(index, e.target.value)}
+            className="category-select"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        )}
       </td>
     </tr>
   );
@@ -107,17 +112,21 @@ export function ImportTransactionCard({
       </div>
       <div className="import-card-category">
         <label>Category:</label>
-        <select
-          value={transaction.category}
-          onChange={(e) => onCategoryChange(index, e.target.value)}
-          className="category-select"
-        >
-          {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        {transaction.isTransfer ? (
+          <span className="payment-label">Payment</span>
+        ) : (
+          <select
+            value={transaction.category}
+            onChange={(e) => onCategoryChange(index, e.target.value)}
+            className="category-select"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );

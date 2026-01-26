@@ -35,10 +35,6 @@ module Deduplication =
         | PotentialDuplicate of TransactionType * similarity: float
         | ExactDuplicate of TransactionType
 
-    let private getTransactionDescription (t: TransactionType) : string =
-        t.TextDescription
-        |> Option.defaultValue (t.Description.ToString())
-
     let private getTransactionAmount (t: TransactionType) : decimal =
         t.Sum.Amount.Value
 
@@ -66,8 +62,11 @@ module Deduplication =
             let withSimilarity =
                 matches
                 |> List.map (fun t ->
-                    let existingDesc = getTransactionDescription t
-                    let similarity = jaccardSimilarity raw.Description existingDesc
+                    let existingDesc = t.TextDescription
+                    let similarity =
+                      match existingDesc with
+                      | Some txtDesc -> jaccardSimilarity raw.Description txtDesc
+                      | None -> similarityThreshold
                     (t, similarity))
                 |> List.sortByDescending snd
 

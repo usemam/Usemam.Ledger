@@ -44,6 +44,7 @@ export interface ParsedTransactionDto {
   category: string;
   isCredit: boolean;
   isDuplicate: boolean;
+  isTransfer: boolean;
 }
 
 export interface ImportSummaryDto {

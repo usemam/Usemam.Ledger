@@ -25,29 +25,79 @@ module ImportService =
         PreviewOnly = false
     }
 
+    // Keywords for detecting payments from checking account to credit cards
+    let private paymentKeywordsForChecking =
+        ["CITI"; "AMEX"; "DISCOVER"; "AMERICAN EXPRESS"; "APPLECARD"; "APPLE CARD"; "GSBANK"]
+
+    // Keywords for detecting payments on credit card statements
+    let private paymentKeywordsForCreditCard =
+        ["PAYMENT"; "ACH"; "ONLINE PAYMENT"; "AUTOPAY"; "WELLS FARGO"; "CHASE"; "BANK OF AMERICA"; "THANK YOU"]
+
+    let detectTransfer (format: BankFormat) (raw: RawTransaction) : bool =
+        let desc = raw.Description.ToUpperInvariant()
+        match format with
+        | WellsFargo ->
+            // Checking account: debits to credit card companies are transfers
+            not raw.IsCredit &&
+            paymentKeywordsForChecking |> List.exists desc.Contains
+        | Amex | AppleCard | Citi | Discover ->
+            // Credit card: credits that are payments are transfers
+            raw.IsCredit &&
+            paymentKeywordsForCreditCard |> List.exists desc.Contains
+
+    let formatToString (format: BankFormat) : string =
+        match format with
+        | Amex -> "amex"
+        | AppleCard -> "apple"
+        | Citi -> "citi"
+        | WellsFargo -> "wellsfargo"
+        | Discover -> "discover"
+
+    let parseForPreview
+        (filePath: string)
+        (format: BankFormat option)
+        (existingTransactions: TransactionType seq)
+        (similarityThreshold: float)
+        : Microsoft.FSharp.Core.Result<BankFormat * PreviewTransaction list, string> =
+
+        // 1. Detect or use specified format
+        let formatResult =
+            match format with
+            | Some f -> Ok f
+            | None -> FormatDetector.detectFromFile filePath
+
+        match formatResult with
+        | Error e -> Error e
+        | Ok detectedFormat ->
+            // 2. Parse CSV
+            match Parsers.parseFile detectedFormat filePath with
+            | Error e -> Error e
+            | Ok rawTransactions ->
+                // 3. Build preview transactions with duplicate and transfer detection
+                let previews =
+                    rawTransactions
+                    |> List.map (fun raw ->
+                        let duplicateCheck = Deduplication.checkForDuplicate existingTransactions raw similarityThreshold
+                        let isDuplicate =
+                            match duplicateCheck with
+                            | Deduplication.ExactDuplicate _ | Deduplication.PotentialDuplicate _ -> true
+                            | Deduplication.Unique -> false
+                        let isTransfer = detectTransfer detectedFormat raw
+                        {
+                            Raw = raw
+                            IsDuplicate = isDuplicate
+                            IsTransfer = isTransfer
+                            Category = if isTransfer then "Payment" else "Misc"
+                        })
+                Ok (detectedFormat, previews)
+
     let private detectTransferPayments
+        (format: BankFormat)
         (transactions: RawTransaction list)
-        : (RawTransaction * RawTransaction option) list =
-
-        let paymentKeywords = ["CITI"; "AMEX"; "DISCOVER"; "AMERICAN EXPRESS"; "APPLECARD"; "APPLE CARD"; "GSBANK"]
-
-        let isPaymentFromChecking (t: RawTransaction) =
-            not t.IsCredit &&
-            paymentKeywords |> List.exists (fun kw -> t.Description.ToUpperInvariant().Contains(kw))
-
-        let credits = transactions |> List.filter (fun t -> t.IsCredit)
+        : (RawTransaction * bool) list =
 
         transactions
-        |> List.map (fun t ->
-            if isPaymentFromChecking t then
-                let matchingCredit =
-                    credits
-                    |> List.tryFind (fun c ->
-                        c.Amount = t.Amount &&
-                        abs (t.Date - c.Date).Days <= 3)
-                (t, matchingCredit)
-            else
-                (t, None))
+        |> List.map (fun t -> (t, detectTransfer format t))
 
     let private toTransactionType
         (account: AccountType)
@@ -121,7 +171,7 @@ module ImportService =
                         Classification.classifyTransactions options.DefaultCategory unique
 
                     // 6. Detect transfer payments
-                    let withTransfers = detectTransferPayments unique
+                    let withTransfers = detectTransferPayments format unique
 
                     // 7. Build results
                     let duplicateResults =
@@ -147,7 +197,7 @@ module ImportService =
 
                     let transferCount =
                         withTransfers
-                        |> List.filter (fun (_, matching) -> matching.IsSome)
+                        |> List.filter (fun (_, isTransfer) -> isTransfer)
                         |> List.length
 
                     Ok {

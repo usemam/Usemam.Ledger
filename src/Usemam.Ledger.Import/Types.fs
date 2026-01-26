@@ -31,3 +31,10 @@ type ImportSummary = {
     Transfers: int
     Results: ImportResult list
 }
+
+type PreviewTransaction = {
+    Raw: RawTransaction
+    IsDuplicate: bool
+    IsTransfer: bool
+    Category: string
+}

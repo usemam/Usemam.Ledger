@@ -140,79 +140,56 @@ let parseStatement : HttpHandler =
                     | None ->
                         return! RequestErrors.notFound (text (sprintf "Account '%s' not found" accountName)) next ctx
                     | Some _ ->
-
-                        // Detect or parse format
-                        let formatResult =
+                        // Parse format option
+                        let formatOption =
                             if String.IsNullOrWhiteSpace(formatStr) then
-                                Usemam.Ledger.Import.FormatDetector.detectFromFile tempPath
+                                None
                             else
-                                Usemam.Ledger.Import.FormatDetector.parseFormatString formatStr
+                                match Usemam.Ledger.Import.FormatDetector.parseFormatString formatStr with
+                                | Ok f -> Some f
+                                | Error _ -> None
 
-                        match formatResult with
+                        // Get existing transactions for duplicate detection
+                        let state = stateService.GetState()
+                        let existingTransactions = state.transactions |> Seq.toList
+
+                        // Use ImportService to parse and build preview
+                        match Usemam.Ledger.Import.ImportService.parseForPreview tempPath formatOption existingTransactions 0.7 with
                         | Error e ->
                             return! RequestErrors.badRequest (text e) next ctx
-                        | Ok format ->
+                        | Ok (detectedFormat, previews) ->
+                            // Convert preview transactions to DTOs
+                            let transactions : ParsedTransactionDto array =
+                                previews
+                                |> List.map (fun p ->
+                                    {
+                                        Date = p.Raw.Date
+                                        Amount = p.Raw.Amount
+                                        Description = p.Raw.Description
+                                        Category = p.Category
+                                        IsCredit = p.Raw.IsCredit
+                                        IsDuplicate = p.IsDuplicate
+                                        IsTransfer = p.IsTransfer
+                                    } : ParsedTransactionDto)
+                                |> List.toArray
 
-                            // Parse the CSV
-                            match Usemam.Ledger.Import.Parsers.parseFile format tempPath with
-                            | Error e ->
-                                return! RequestErrors.badRequest (text e) next ctx
-                            | Ok rawTransactions ->
+                            let credits = transactions |> Array.filter (fun t -> t.IsCredit) |> Array.length
+                            let debits = transactions |> Array.filter (fun t -> not t.IsCredit) |> Array.length
+                            let duplicates = transactions |> Array.filter (fun t -> t.IsDuplicate) |> Array.length
 
-                                // Check for duplicates
-                                let state = stateService.GetState()
-                                let existingTransactions = state.transactions |> Seq.toList
-
-                                let duplicateChecks =
-                                    rawTransactions
-                                    |> List.map (fun raw ->
-                                        let check = Usemam.Ledger.Import.Deduplication.checkForDuplicate existingTransactions raw 0.7
-                                        (raw, check))
-
-                                // Build response
-                                let transactions =
-                                    duplicateChecks
-                                    |> List.map (fun (raw, check) ->
-                                        let isDuplicate =
-                                            match check with
-                                            | Usemam.Ledger.Import.Deduplication.ExactDuplicate _
-                                            | Usemam.Ledger.Import.Deduplication.PotentialDuplicate _ -> true
-                                            | Usemam.Ledger.Import.Deduplication.Unique -> false
-                                        {
-                                            Date = raw.Date
-                                            Amount = raw.Amount
-                                            Description = raw.Description
-                                            Category = "Misc"
-                                            IsCredit = raw.IsCredit
-                                            IsDuplicate = isDuplicate
-                                        } : ParsedTransactionDto)
-                                    |> List.toArray
-
-                                let credits = transactions |> Array.filter (fun t -> t.IsCredit) |> Array.length
-                                let debits = transactions |> Array.filter (fun t -> not t.IsCredit) |> Array.length
-                                let duplicates = transactions |> Array.filter (fun t -> t.IsDuplicate) |> Array.length
-
-                                let formatName =
-                                    match format with
-                                    | Usemam.Ledger.Import.BankFormat.Amex -> "amex"
-                                    | Usemam.Ledger.Import.BankFormat.AppleCard -> "apple"
-                                    | Usemam.Ledger.Import.BankFormat.Citi -> "citi"
-                                    | Usemam.Ledger.Import.BankFormat.WellsFargo -> "wellsfargo"
-                                    | Usemam.Ledger.Import.BankFormat.Discover -> "discover"
-
-                                let result : ParseResultDto = {
-                                    AccountName = accountName
-                                    DetectedFormat = formatName
-                                    Transactions = transactions
-                                    Summary = {
-                                        Total = transactions.Length
-                                        Credits = credits
-                                        Debits = debits
-                                        Duplicates = duplicates
-                                    }
+                            let result : ParseResultDto = {
+                                AccountName = accountName
+                                DetectedFormat = Usemam.Ledger.Import.ImportService.formatToString detectedFormat
+                                Transactions = transactions
+                                Summary = {
+                                    Total = transactions.Length
+                                    Credits = credits
+                                    Debits = debits
+                                    Duplicates = duplicates
                                 }
+                            }
 
-                                return! json result next ctx
+                            return! json result next ctx
                 finally
                     if File.Exists(tempPath) then
                         File.Delete(tempPath)

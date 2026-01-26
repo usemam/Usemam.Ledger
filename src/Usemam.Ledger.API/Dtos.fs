@@ -99,6 +99,7 @@ type ParsedTransactionDto =
         Category: string
         IsCredit: bool
         IsDuplicate: bool
+        IsTransfer: bool
     }
 
 [<CLIMutable>]

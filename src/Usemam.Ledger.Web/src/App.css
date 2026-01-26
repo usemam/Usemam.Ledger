@@ -1119,6 +1119,16 @@ main {
   border-color: var(--accent-rust);
 }
 
+.payment-label {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-light);
+  background-color: var(--paper-shadow);
+  border-radius: var(--radius-sm);
+}
+
 /* Import Cards - Mobile */
 .import-cards-container {
   display: flex;
