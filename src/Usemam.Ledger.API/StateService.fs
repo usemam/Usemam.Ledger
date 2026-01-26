@@ -24,6 +24,8 @@ type StorageConfiguration =
 
 type IStateService =
     abstract member GetState: unit -> State
+    abstract member AddTransactions: TransactionType list -> Result<unit>
+    abstract member GetAccountByName: string -> AccountType option
 
 type StateService(configuration: IConfiguration) =
     let loadStorageConfiguration () =
@@ -37,7 +39,7 @@ type StateService(configuration: IConfiguration) =
 
     let config = loadStorageConfiguration()
 
-    let state =
+    let mutable state =
         let loadResult =
             match config.StorageType.ToLowerInvariant() with
             | "mongodb" | "mongo" ->
@@ -50,5 +52,34 @@ type StateService(configuration: IConfiguration) =
         | Success tracker -> tracker.state
         | Failure msg -> failwith (sprintf "Failed to load state: %s" msg)
 
+    let saveState newState =
+        match config.StorageType.ToLowerInvariant() with
+        | "mongodb" | "mongo" ->
+            let context = MongoContext(config)
+            context.SaveState(newState)
+        | _ ->
+            let context = JsonContext(config)
+            context.SaveState(newState)
+
     interface IStateService with
         member _.GetState() = state
+
+        member _.GetAccountByName(name: string) =
+            state.accounts.getByName name
+
+        member _.AddTransactions(transactions: TransactionType list) =
+            try
+                // Add each transaction to the state using pushTransaction
+                let newState =
+                    transactions
+                    |> List.fold (fun (s: State) t -> s.pushTransaction t) state
+
+                // Save and update state
+                match saveState newState with
+                | Success () ->
+                    state <- newState
+                    Success ()
+                | Failure msg ->
+                    Failure msg
+            with ex ->
+                Failure ex.Message

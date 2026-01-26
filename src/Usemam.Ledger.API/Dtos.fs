@@ -87,3 +87,59 @@ type SpendingReportDto =
         MonthlyTotals: decimal array
         YearlyNet: decimal
     }
+
+// Import DTOs
+
+[<CLIMutable>]
+type ParsedTransactionDto =
+    {
+        Date: DateTimeOffset
+        Amount: decimal
+        Description: string
+        Category: string
+        IsCredit: bool
+        IsDuplicate: bool
+    }
+
+[<CLIMutable>]
+type ImportSummaryDto =
+    {
+        Total: int
+        Credits: int
+        Debits: int
+        Duplicates: int
+    }
+
+[<CLIMutable>]
+type ParseResultDto =
+    {
+        AccountName: string
+        DetectedFormat: string
+        Transactions: ParsedTransactionDto array
+        Summary: ImportSummaryDto
+    }
+
+[<CLIMutable>]
+type ImportTransactionDto =
+    {
+        Date: DateTimeOffset
+        Amount: decimal
+        Description: string
+        Category: string
+        IsCredit: bool
+    }
+
+[<CLIMutable>]
+type ImportConfirmDto =
+    {
+        AccountName: string
+        Transactions: ImportTransactionDto array
+    }
+
+[<CLIMutable>]
+type ImportResultDto =
+    {
+        Success: bool
+        Imported: int
+        Message: string
+    }

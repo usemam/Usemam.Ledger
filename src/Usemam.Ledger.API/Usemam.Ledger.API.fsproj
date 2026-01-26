@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Usemam.Ledger.Domain\Usemam.Ledger.Domain.fsproj" />
+    <ProjectReference Include="..\Usemam.Ledger.Import\Usemam.Ledger.Import.fsproj" />
     <ProjectReference Include="..\Usemam.Ledger.Persistence.Json\Usemam.Ledger.Persistence.Json.fsproj" />
     <ProjectReference Include="..\Usemam.Ledger.Persistence.Mongo\Usemam.Ledger.Persistence.Mongo.fsproj" />
   </ItemGroup>

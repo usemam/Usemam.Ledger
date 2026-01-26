@@ -904,3 +904,304 @@ main {
   font-size: var(--text-sm);
   color: var(--ink-secondary);
 }
+
+/* ==========================================
+   Import Page
+   ========================================== */
+
+.import-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.import-error {
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  background-color: var(--debit-bg);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+  color: var(--danger);
+}
+
+.import-upload {
+  padding: var(--space-2xl);
+  text-align: center;
+  background-color: var(--paper-aged);
+  border: 2px dashed var(--paper-shadow);
+  border-radius: var(--radius-md);
+}
+
+.import-formats {
+  font-size: var(--text-sm);
+  color: var(--ink-light);
+  margin-top: var(--space-sm);
+}
+
+.file-input {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  font-family: var(--font-sans);
+}
+
+.import-loading {
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--ink-secondary);
+}
+
+.import-summary {
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  background-color: var(--paper-aged);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-md);
+}
+
+.import-summary p {
+  margin: var(--space-xs) 0;
+}
+
+.import-actions-top {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.import-actions-bottom {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--paper-shadow);
+}
+
+/* Account Actions (Import Button) */
+.account-actions {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--paper-shadow);
+}
+
+/* Buttons */
+.btn-primary,
+.btn-secondary {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background-color: var(--accent-rust);
+  color: var(--paper-cream);
+  border: 1px solid var(--accent-rust);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #8B3E2F;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: var(--paper-cream);
+  color: var(--ink-primary);
+  border: 1px solid var(--paper-shadow);
+}
+
+.btn-secondary:hover {
+  background-color: var(--paper-aged);
+  border-color: var(--ink-light);
+}
+
+/* Import Table - Desktop */
+.import-table-container {
+  display: none;
+  overflow-x: auto;
+  background: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .import-table-container {
+    display: block;
+  }
+}
+
+.import-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.import-table th {
+  background: var(--paper-aged);
+  font-weight: 600;
+  color: var(--ink-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 2px solid var(--paper-shadow);
+}
+
+.import-table th.checkbox-col {
+  width: 40px;
+}
+
+.import-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--paper-shadow);
+  vertical-align: middle;
+}
+
+.import-row.duplicate {
+  background-color: var(--debit-bg);
+}
+
+.import-cell.amount-cell {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.import-cell.amount-cell.credit {
+  color: var(--credit-text);
+}
+
+.import-cell.amount-cell.debit {
+  color: var(--debit-text);
+}
+
+.import-cell.description-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duplicate-badge {
+  display: inline-block;
+  margin-left: var(--space-sm);
+  padding: 2px var(--space-xs);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: var(--danger);
+  color: white;
+  border-radius: var(--radius-sm);
+}
+
+.category-select {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-sm);
+  background-color: var(--paper-cream);
+  cursor: pointer;
+  width: 100%;
+  max-width: 160px;
+}
+
+.category-select:focus {
+  outline: none;
+  border-color: var(--accent-rust);
+}
+
+/* Import Cards - Mobile */
+.import-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .import-cards-container {
+    display: none;
+  }
+}
+
+.import-card {
+  background: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.import-card.duplicate {
+  background-color: var(--debit-bg);
+  border-color: var(--danger);
+}
+
+.import-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.import-card-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+}
+
+.import-card-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.import-card-date {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+}
+
+.import-card-amount {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.import-card-amount.credit {
+  color: var(--credit-text);
+}
+
+.import-card-amount.debit {
+  color: var(--debit-text);
+}
+
+.import-card-description {
+  font-size: var(--text-sm);
+  color: var(--ink-primary);
+  margin-bottom: var(--space-md);
+  word-break: break-word;
+}
+
+.import-card-category {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.import-card-category label {
+  font-size: var(--text-sm);
+  color: var(--ink-secondary);
+}
+
+.import-card-category .category-select {
+  flex: 1;
+  max-width: none;
+}

@@ -62,6 +62,16 @@ export function AccountDetails() {
             {account.isClosed ? "Closed" : "Open"}
           </span>
         </div>
+        {!account.isClosed && (
+          <div className="account-actions">
+            <Link
+              to={`/accounts/${encodeURIComponent(account.name)}/import`}
+              className="btn-primary"
+            >
+              Import Statement
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="transaction-section">

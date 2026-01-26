@@ -34,3 +34,47 @@ export interface SpendingReportDto {
   monthlyTotals: number[];
   yearlyNet: number;
 }
+
+// Import types
+
+export interface ParsedTransactionDto {
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+  isCredit: boolean;
+  isDuplicate: boolean;
+}
+
+export interface ImportSummaryDto {
+  total: number;
+  credits: number;
+  debits: number;
+  duplicates: number;
+}
+
+export interface ParseResultDto {
+  accountName: string;
+  detectedFormat: string;
+  transactions: ParsedTransactionDto[];
+  summary: ImportSummaryDto;
+}
+
+export interface ImportTransactionDto {
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+  isCredit: boolean;
+}
+
+export interface ImportConfirmDto {
+  accountName: string;
+  transactions: ImportTransactionDto[];
+}
+
+export interface ImportResultDto {
+  success: boolean;
+  imported: number;
+  message: string;
+}
