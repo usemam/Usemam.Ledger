@@ -33,6 +33,13 @@ type TransactionDto =
         Description: string option
     }
 
+[<CLIMutable>]
+type PaginatedTransactionsDto =
+    {
+        Transactions: TransactionDto array
+        HasMore: bool
+    }
+
 module Mapping =
     let toMoneyDto (money: Money) : MoneyDto =
         {
@@ -128,6 +135,8 @@ type ImportTransactionDto =
         Description: string
         Category: string
         IsCredit: bool
+        IsTransfer: bool
+        TransferAccountName: string
     }
 
 [<CLIMutable>]

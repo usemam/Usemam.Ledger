@@ -22,6 +22,11 @@ export interface TransactionDto {
   description: string | null;
 }
 
+export interface PaginatedTransactionsDto {
+  transactions: TransactionDto[];
+  hasMore: boolean;
+}
+
 export interface CategorySpendingDto {
   category: string;
   monthlyAmounts: number[];
@@ -67,6 +72,8 @@ export interface ImportTransactionDto {
   description: string;
   category: string;
   isCredit: boolean;
+  isTransfer: boolean;
+  transferAccountName: string | null;
 }
 
 export interface ImportConfirmDto {

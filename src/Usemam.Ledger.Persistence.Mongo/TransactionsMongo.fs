@@ -47,3 +47,12 @@ type TransactionsMongo(collection : IMongoCollection<TransactionDocument>, accou
                 let filter = Builders<TransactionDocument>.Filter.Eq("_id", mostRecent._id)
                 collection.DeleteOne(filter) |> ignore
             TransactionsMongo(collection, accountsMongo) :> ITransactions
+
+        member this.getPage skip take =
+            let sortByDateDesc = Builders<TransactionDocument>.Sort.Descending("Date")
+            collection.Find(Builders<TransactionDocument>.Filter.Empty)
+                .Sort(sortByDateDesc)
+                .Skip(skip)
+                .Limit(take)
+                .ToEnumerable()
+            |> Seq.choose (Mapping.fromTransactionDocument getAccountById getAccountByName)

@@ -1,4 +1,5 @@
 import { CATEGORIES } from "../constants/categories";
+import type { AccountDto } from "../types/api";
 
 interface ImportTransaction {
   date: string;
@@ -8,27 +9,39 @@ interface ImportTransaction {
   isCredit: boolean;
   isDuplicate: boolean;
   isTransfer: boolean;
+  transferAccountName: string | null;
   selected: boolean;
 }
 
 interface ImportTransactionRowProps {
   transaction: ImportTransaction;
   index: number;
+  accounts: AccountDto[];
+  currentAccountName: string;
   onToggleSelect: (index: number) => void;
   onCategoryChange: (index: number, category: string) => void;
+  onTransferAccountChange: (index: number, accountName: string | null) => void;
+  onToggleTransfer: (index: number) => void;
 }
 
 export function ImportTransactionRow({
   transaction,
   index,
+  accounts,
+  currentAccountName,
   onToggleSelect,
   onCategoryChange,
+  onTransferAccountChange,
+  onToggleTransfer,
 }: ImportTransactionRowProps) {
   const formattedDate = new Date(transaction.date).toLocaleDateString();
   const formattedAmount = transaction.amount.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
   });
+
+  // Filter out the current account from the transfer dropdown
+  const availableAccounts = accounts.filter(a => a.name !== currentAccountName);
 
   return (
     <tr className={`import-row ${transaction.isDuplicate ? "duplicate" : ""}`}>
@@ -54,7 +67,28 @@ export function ImportTransactionRow({
       </td>
       <td className="import-cell category-cell">
         {transaction.isTransfer ? (
-          <span className="payment-label">Payment</span>
+          <div className="transfer-select-container">
+            <select
+              value={transaction.transferAccountName || ""}
+              onChange={(e) => onTransferAccountChange(index, e.target.value || null)}
+              className="category-select transfer-account-select"
+            >
+              <option value="">Select account...</option>
+              {availableAccounts.map((account) => (
+                <option key={account.name} value={account.name}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="btn-unmark-transfer"
+              onClick={() => onToggleTransfer(index)}
+              title="Not a transfer"
+            >
+              ✕
+            </button>
+          </div>
         ) : (
           <select
             value={transaction.category}
@@ -77,14 +111,21 @@ export function ImportTransactionRow({
 export function ImportTransactionCard({
   transaction,
   index,
+  accounts,
+  currentAccountName,
   onToggleSelect,
   onCategoryChange,
+  onTransferAccountChange,
+  onToggleTransfer,
 }: ImportTransactionRowProps) {
   const formattedDate = new Date(transaction.date).toLocaleDateString();
   const formattedAmount = transaction.amount.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
   });
+
+  // Filter out the current account from the transfer dropdown
+  const availableAccounts = accounts.filter(a => a.name !== currentAccountName);
 
   return (
     <div className={`import-card ${transaction.isDuplicate ? "duplicate" : ""}`}>
@@ -111,9 +152,30 @@ export function ImportTransactionCard({
         )}
       </div>
       <div className="import-card-category">
-        <label>Category:</label>
+        <label>{transaction.isTransfer ? "Transfer to/from:" : "Category:"}</label>
         {transaction.isTransfer ? (
-          <span className="payment-label">Payment</span>
+          <div className="transfer-select-container">
+            <select
+              value={transaction.transferAccountName || ""}
+              onChange={(e) => onTransferAccountChange(index, e.target.value || null)}
+              className="category-select transfer-account-select"
+            >
+              <option value="">Select account...</option>
+              {availableAccounts.map((account) => (
+                <option key={account.name} value={account.name}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="btn-unmark-transfer"
+              onClick={() => onToggleTransfer(index)}
+              title="Not a transfer"
+            >
+              ✕
+            </button>
+          </div>
         ) : (
           <select
             value={transaction.category}

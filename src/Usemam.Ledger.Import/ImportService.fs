@@ -13,16 +13,6 @@ module ImportService =
         Format: BankFormat option
         SimilarityThreshold: float
         DefaultCategory: string
-        PreviewOnly: bool
-    }
-
-    let defaultOptions filePath accountName = {
-        FilePath = filePath
-        AccountName = accountName
-        Format = None
-        SimilarityThreshold = 0.7
-        DefaultCategory = "Misc"
-        PreviewOnly = false
     }
 
     // Keywords for detecting payments from checking account to credit cards
@@ -80,7 +70,8 @@ module ImportService =
                         let duplicateCheck = Deduplication.checkForDuplicate existingTransactions raw similarityThreshold
                         let isDuplicate =
                             match duplicateCheck with
-                            | Deduplication.ExactDuplicate _ | Deduplication.PotentialDuplicate _ -> true
+                            | Deduplication.ExactDuplicate _
+                            | Deduplication.PotentialDuplicate _ -> true
                             | Deduplication.Unique -> false
                         let isTransfer = detectTransfer detectedFormat raw
                         {
@@ -208,14 +199,6 @@ module ImportService =
                         Transfers = transferCount
                         Results = importedResults @ duplicateResults
                     }
-
-    let preview
-        (options: ImportOptions)
-        (existingTransactions: TransactionType seq)
-        (getAccount: string -> AccountType option)
-        : ImportResult<ImportSummary> =
-
-        import { options with PreviewOnly = true } existingTransactions getAccount
 
     let getTransactionsToImport (summary: ImportSummary) : TransactionType list =
         summary.Results

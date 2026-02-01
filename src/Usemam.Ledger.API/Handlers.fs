@@ -38,6 +38,11 @@ let private getAccountNames (description: TransactionDescription) =
     | Credit (account, _) -> [account.Name]
     | Debit (account, _) -> [account.Name]
 
+let private tryParseInt (s: string) (defaultValue: int) =
+    match System.Int32.TryParse(s) with
+    | true, v when v >= 0 -> v
+    | _ -> defaultValue
+
 let getTransactionsForAccount (name: string) : HttpHandler =
     fun next ctx ->
         let stateService = getStateService ctx
@@ -45,12 +50,35 @@ let getTransactionsForAccount (name: string) : HttpHandler =
         match state.accounts.getByName name with
         | None -> RequestErrors.notFound (text (sprintf "Account '%s' not found" name)) next ctx
         | Some account ->
-            let transactions =
-                state.transactions
+            let skip = ctx.Request.Query.["skip"].ToString() |> fun s -> tryParseInt s 0
+            let take = ctx.Request.Query.["take"].ToString() |> fun s -> tryParseInt s 50
+
+            // Request one extra to determine hasMore
+            let requestCount = take + 1
+
+            let allAccountTransactions =
+                state.transactions.getPage 0 System.Int32.MaxValue
                 |> Seq.filter (fun t -> getAccountNames t.Description |> List.exists (fun n -> n = account.Name))
+                |> Seq.toArray
+
+            let paginatedTransactions =
+                allAccountTransactions
+                |> Seq.skip skip
+                |> Seq.truncate requestCount
+                |> Seq.toArray
+
+            let hasMore = paginatedTransactions.Length > take
+            let resultTransactions =
+                paginatedTransactions
+                |> Seq.truncate take
                 |> Seq.map Mapping.toTransactionDto
-                |> Seq.toList
-            json transactions next ctx
+                |> Seq.toArray
+
+            let result : PaginatedTransactionsDto = {
+                Transactions = resultTransactions
+                HasMore = hasMore
+            }
+            json result next ctx
 
 let getSpendingReport (year: int) : HttpHandler =
     fun next ctx ->
@@ -208,40 +236,74 @@ let confirmImport : HttpHandler =
             | Some account ->
 
                 // Convert DTOs to domain transactions
-                let transactions =
+                let transactionResults =
                     importRequest.Transactions
                     |> Array.map (fun dto ->
                         let money = Money(Amount.create dto.Amount, USD)
-                        if dto.IsCredit then
-                            {
+                        if dto.IsTransfer && not (String.IsNullOrWhiteSpace(dto.TransferAccountName)) then
+                            // Handle transfer transaction
+                            match stateService.GetAccountByName dto.TransferAccountName with
+                            | None -> Error (sprintf "Transfer account '%s' not found" dto.TransferAccountName)
+                            | Some transferAccount ->
+                                // IsCredit = true means money coming in, so transfer FROM transferAccount TO account
+                                // IsCredit = false means money going out, so transfer FROM account TO transferAccount
+                                let (sourceAccount, destAccount) =
+                                    if dto.IsCredit then (transferAccount, account)
+                                    else (account, transferAccount)
+                                Ok {
+                                    Date = dto.Date
+                                    Sum = money
+                                    Description = Transfer (sourceAccount, destAccount)
+                                    TextDescription = Some dto.Description
+                                }
+                        elif dto.IsCredit then
+                            Ok {
                                 Date = dto.Date
                                 Sum = money
                                 Description = Credit (account, CreditSource dto.Category)
                                 TextDescription = Some dto.Description
-                            } : TransactionType
+                            }
                         else
-                            {
+                            Ok {
                                 Date = dto.Date
                                 Sum = money
                                 Description = Debit (account, DebitTarget dto.Category)
                                 TextDescription = Some dto.Description
-                            } : TransactionType)
+                            })
+
+                // Check for errors
+                let errors =
+                    transactionResults
+                    |> Array.choose (function Error e -> Some e | Ok _ -> None)
                     |> Array.toList
 
-                // Add transactions
-                match stateService.AddTransactions transactions with
-                | Usemam.Ledger.Domain.Result.Success () ->
-                    let result : ImportResultDto = {
-                        Success = true
-                        Imported = transactions.Length
-                        Message = sprintf "Successfully imported %d transactions" transactions.Length
-                    }
-                    return! json result next ctx
-                | Usemam.Ledger.Domain.Result.Failure msg ->
+                if not (List.isEmpty errors) then
                     let result : ImportResultDto = {
                         Success = false
                         Imported = 0
-                        Message = msg
+                        Message = String.concat "; " errors
                     }
-                    return! ServerErrors.internalError (json result) next ctx
+                    return! RequestErrors.badRequest (json result) next ctx
+                else
+                    let transactions =
+                        transactionResults
+                        |> Array.choose (function Ok t -> Some t | Error _ -> None)
+                        |> Array.toList
+
+                    // Add transactions
+                    match stateService.AddTransactions transactions with
+                    | Success () ->
+                        let result : ImportResultDto = {
+                            Success = true
+                            Imported = transactions.Length
+                            Message = sprintf "Successfully imported %d transactions" transactions.Length
+                        }
+                        return! json result next ctx
+                    | Failure msg ->
+                        let result : ImportResultDto = {
+                            Success = false
+                            Imported = 0
+                            Message = msg
+                        }
+                        return! ServerErrors.internalError (json result) next ctx
         }

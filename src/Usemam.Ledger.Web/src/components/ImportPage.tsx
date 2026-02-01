@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useParseStatement, useConfirmImport } from "../hooks/useImport";
+import { useAccounts } from "../hooks/useAccounts";
 import {
   ImportTransactionRow,
   ImportTransactionCard,
@@ -9,6 +10,7 @@ import type { ParsedTransactionDto } from "../types/api";
 
 interface ImportTransaction extends ParsedTransactionDto {
   selected: boolean;
+  transferAccountName: string | null;
 }
 
 type ImportState = "initial" | "parsing" | "preview" | "importing";
@@ -26,6 +28,7 @@ export function ImportPage() {
 
   const parseStatement = useParseStatement();
   const confirmImport = useConfirmImport();
+  const { data: accounts = [] } = useAccounts();
 
   const handleFileSelect = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -47,6 +50,7 @@ export function ImportPage() {
         result.transactions.map((t) => ({
           ...t,
           selected: true,
+          transferAccountName: null,
         }))
       );
       setImportState("preview");
@@ -68,6 +72,18 @@ export function ImportPage() {
     );
   };
 
+  const handleTransferAccountChange = (index: number, accountName: string | null) => {
+    setTransactions((prev) =>
+      prev.map((t, i) => (i === index ? { ...t, transferAccountName: accountName } : t))
+    );
+  };
+
+  const handleToggleTransfer = (index: number) => {
+    setTransactions((prev) =>
+      prev.map((t, i) => (i === index ? { ...t, isTransfer: !t.isTransfer, transferAccountName: null } : t))
+    );
+  };
+
   const handleSelectAll = () => {
     setTransactions((prev) => prev.map((t) => ({ ...t, selected: true })));
   };
@@ -79,6 +95,15 @@ export function ImportPage() {
   const handleImport = async () => {
     const selectedTransactions = transactions.filter((t) => t.selected);
     if (selectedTransactions.length === 0) return;
+
+    // Validate that all transfers have an account selected
+    const invalidTransfers = selectedTransactions.filter(
+      (t) => t.isTransfer && !t.transferAccountName
+    );
+    if (invalidTransfers.length > 0) {
+      setError("Please select an account for all transfer transactions");
+      return;
+    }
 
     setImportState("importing");
     setError(null);
@@ -92,6 +117,8 @@ export function ImportPage() {
           description: t.description,
           category: t.category,
           isCredit: t.isCredit,
+          isTransfer: t.isTransfer,
+          transferAccountName: t.transferAccountName,
         })),
       });
 
@@ -196,8 +223,12 @@ export function ImportPage() {
                     key={index}
                     transaction={transaction}
                     index={index}
+                    accounts={accounts}
+                    currentAccountName={decodedName}
                     onToggleSelect={handleToggleSelect}
                     onCategoryChange={handleCategoryChange}
+                    onTransferAccountChange={handleTransferAccountChange}
+                    onToggleTransfer={handleToggleTransfer}
                   />
                 ))}
               </tbody>
@@ -211,8 +242,12 @@ export function ImportPage() {
                 key={index}
                 transaction={transaction}
                 index={index}
+                accounts={accounts}
+                currentAccountName={decodedName}
                 onToggleSelect={handleToggleSelect}
                 onCategoryChange={handleCategoryChange}
+                onTransferAccountChange={handleTransferAccountChange}
+                onToggleTransfer={handleToggleTransfer}
               />
             ))}
           </div>

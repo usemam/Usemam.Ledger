@@ -442,6 +442,26 @@ main {
   }
 }
 
+/* Load More / Infinite Scroll */
+.load-more-trigger {
+  padding: var(--space-md);
+  text-align: center;
+  min-height: 60px;
+}
+
+.loading-more {
+  color: var(--ink-secondary);
+  font-size: var(--text-sm);
+  padding: var(--space-sm);
+}
+
+.no-more-transactions {
+  color: var(--ink-light);
+  font-size: var(--text-sm);
+  font-style: italic;
+  padding: var(--space-sm);
+}
+
 .transaction-card {
   padding: var(--space-md);
   border-bottom: 1px solid var(--paper-shadow);
@@ -1214,4 +1234,37 @@ main {
 .import-card-category .category-select {
   flex: 1;
   max-width: none;
+}
+
+/* Transfer Select */
+.transfer-select-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.transfer-account-select {
+  flex: 1;
+}
+
+.btn-unmark-transfer {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: var(--space-xs);
+  min-width: 24px;
+  height: 24px;
+  line-height: 1;
+  background-color: var(--paper-cream);
+  border: 1px solid var(--paper-shadow);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--ink-light);
+  transition: all var(--transition-fast);
+}
+
+.btn-unmark-transfer:hover {
+  background-color: var(--debit-bg);
+  border-color: var(--danger);
+  color: var(--danger);
 }

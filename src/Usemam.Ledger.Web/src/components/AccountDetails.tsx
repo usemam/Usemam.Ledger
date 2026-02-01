@@ -14,10 +14,15 @@ export function AccountDetails() {
   } = useAccount(decodedName);
 
   const {
-    data: transactions,
+    data: transactionsData,
     isLoading: transactionsLoading,
     error: transactionsError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = useAccountTransactions(decodedName);
+
+  const transactions = transactionsData?.pages.flatMap((page) => page.transactions) || [];
 
   if (accountLoading) {
     return <div className="loading">Loading account...</div>;
@@ -77,9 +82,12 @@ export function AccountDetails() {
       <div className="transaction-section">
         <h3>Transactions</h3>
         <TransactionList
-          transactions={transactions || []}
+          transactions={transactions}
           isLoading={transactionsLoading}
           error={transactionsError}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
+          onLoadMore={() => fetchNextPage()}
         />
       </div>
     </div>

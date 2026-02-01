@@ -1,7 +1,7 @@
 import type {
   AccountDto,
   SpendingReportDto,
-  TransactionDto,
+  PaginatedTransactionsDto,
   ParseResultDto,
   ImportConfirmDto,
   ImportResultDto,
@@ -28,10 +28,12 @@ export async function getAccountByName(name: string): Promise<AccountDto> {
 }
 
 export async function getTransactionsForAccount(
-  name: string
-): Promise<TransactionDto[]> {
-  return fetchJson<TransactionDto[]>(
-    `${API_BASE_URL}/api/accounts/${encodeURIComponent(name)}/transactions`
+  name: string,
+  skip: number = 0,
+  take: number = 50
+): Promise<PaginatedTransactionsDto> {
+  return fetchJson<PaginatedTransactionsDto>(
+    `${API_BASE_URL}/api/accounts/${encodeURIComponent(name)}/transactions?skip=${skip}&take=${take}`
   );
 }
 
