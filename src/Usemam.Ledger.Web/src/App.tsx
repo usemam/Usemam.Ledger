@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { MainPage } from "./components/MainPage";
 import { AccountDetails } from "./components/AccountDetails";
+import { ImportPage } from "./components/ImportPage";
 import "./App.css";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/accounts/:name" element={<AccountDetails />} />
+          <Route path="/accounts/:name/import" element={<ImportPage />} />
         </Routes>
       </main>
     </div>

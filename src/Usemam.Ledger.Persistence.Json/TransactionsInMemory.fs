@@ -17,3 +17,8 @@ type TransactionsInMemory(transactions : TransactionType list) =
         member this.pop () =
             TransactionsInMemory(transactions.Tail)
             :> ITransactions
+        member this.getPage skip take =
+            transactions
+            |> List.sortByDescending (fun t -> t.Date)
+            |> Seq.skip skip
+            |> Seq.truncate take

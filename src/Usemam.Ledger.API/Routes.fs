@@ -12,5 +12,9 @@ let webApp : HttpHandler =
             routef "/api/accounts/%s" getAccountByName
             routef "/api/reports/spending/%i" getSpendingReport
         ]
+        POST >=> choose [
+            route "/api/import/parse" >=> parseStatement
+            route "/api/import/confirm" >=> confirmImport
+        ]
         RequestErrors.notFound (text "Not Found")
     ]
