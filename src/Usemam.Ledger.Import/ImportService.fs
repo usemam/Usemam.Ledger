@@ -199,10 +199,3 @@ module ImportService =
                         Transfers = transferCount
                         Results = importedResults @ duplicateResults
                     }
-
-    let getTransactionsToImport (summary: ImportSummary) : TransactionType list =
-        summary.Results
-        |> List.choose (fun r ->
-            match r with
-            | Imported t -> Some t
-            | _ -> None)
