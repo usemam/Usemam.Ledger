@@ -19,6 +19,7 @@ let main args =
     builder.Configuration
         .SetBasePath(builder.Environment.ContentRootPath)
         .AddJsonFile("appsettings.json", optional = false, reloadOnChange = true)
+        .AddEnvironmentVariables()
         |> ignore
 
     // Get CORS origins from configuration

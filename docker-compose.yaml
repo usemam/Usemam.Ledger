@@ -23,5 +23,31 @@ services:
     depends_on:
       - mongodb
 
+  api:
+    build:
+      context: .
+      dockerfile: src/Usemam.Ledger.API/Dockerfile
+    container_name: ledger-api
+    ports:
+      - "5001:5000"
+    environment:
+      - StorageType=mongo
+      - MongoConnectionString=mongodb://admin:password@mongodb:27017
+      - MongoDatabaseName=ledger_prod
+    depends_on:
+      - mongodb
+
+  web:
+    build:
+      context: .
+      dockerfile: src/Usemam.Ledger.Web/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5001
+    container_name: ledger-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
 volumes:
   mongodb_data:
