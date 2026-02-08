@@ -17,8 +17,14 @@ type TransactionsInMemory(transactions : TransactionType list) =
         member this.pop () =
             TransactionsInMemory(transactions.Tail)
             :> ITransactions
-        member this.getPage skip take =
+        member this.getPageForAccount accountName skip take =
+            let matchesAccount (t: TransactionType) =
+                match t.Description with
+                | Transfer (source, dest) -> source.Name = accountName || dest.Name = accountName
+                | Credit (account, _) -> account.Name = accountName
+                | Debit (account, _) -> account.Name = accountName
             transactions
+            |> List.filter matchesAccount
             |> List.sortByDescending (fun t -> t.Date)
             |> Seq.skip skip
             |> Seq.truncate take

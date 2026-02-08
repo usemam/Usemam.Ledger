@@ -39,7 +39,7 @@ module Transaction =
         abstract between : DateTimeOffset -> DateTimeOffset -> seq<TransactionType>
         abstract push : TransactionType -> ITransactions
         abstract pop : unit -> ITransactions
-        abstract getPage : skip:int -> take:int -> seq<TransactionType>
+        abstract getPageForAccount : accountName:string -> skip:int -> take:int -> seq<TransactionType>
 
     let create clock amount description =
         {

@@ -48,9 +48,14 @@ type TransactionsMongo(collection : IMongoCollection<TransactionDocument>, accou
                 collection.DeleteOne(filter) |> ignore
             TransactionsMongo(collection, accountsMongo) :> ITransactions
 
-        member this.getPage skip take =
+        member this.getPageForAccount accountName skip take =
             let sortByDateDesc = Builders<TransactionDocument>.Sort.Descending("Date")
-            collection.Find(Builders<TransactionDocument>.Filter.Empty)
+            let accountFilter =
+                Builders<TransactionDocument>.Filter.Or(
+                    Builders<TransactionDocument>.Filter.Eq("Description.SourceAccountName", accountName),
+                    Builders<TransactionDocument>.Filter.Eq("Description.DestAccountName", accountName)
+                )
+            collection.Find(accountFilter)
                 .Sort(sortByDateDesc)
                 .Skip(skip)
                 .Limit(take)

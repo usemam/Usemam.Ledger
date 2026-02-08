@@ -32,12 +32,6 @@ let getAccountByName (name: string) : HttpHandler =
         | Some account -> json (Mapping.toAccountDto account) next ctx
         | None -> RequestErrors.notFound (text (sprintf "Account '%s' not found" name)) next ctx
 
-let private getAccountNames (description: TransactionDescription) =
-    match description with
-    | Transfer (source, dest) -> [source.Name; dest.Name]
-    | Credit (account, _) -> [account.Name]
-    | Debit (account, _) -> [account.Name]
-
 let private tryParseInt (s: string) (defaultValue: int) =
     match System.Int32.TryParse(s) with
     | true, v when v >= 0 -> v
@@ -56,15 +50,8 @@ let getTransactionsForAccount (name: string) : HttpHandler =
             // Request one extra to determine hasMore
             let requestCount = take + 1
 
-            let allAccountTransactions =
-                state.transactions.getPage 0 System.Int32.MaxValue
-                |> Seq.filter (fun t -> getAccountNames t.Description |> List.exists (fun n -> n = account.Name))
-                |> Seq.toArray
-
             let paginatedTransactions =
-                allAccountTransactions
-                |> Seq.skip skip
-                |> Seq.truncate requestCount
+                state.transactions.getPageForAccount account.Name skip requestCount
                 |> Seq.toArray
 
             let hasMore = paginatedTransactions.Length > take
