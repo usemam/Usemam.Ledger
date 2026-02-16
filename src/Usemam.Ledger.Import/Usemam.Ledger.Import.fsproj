@@ -9,7 +9,6 @@
     <Compile Include="FormatDetector.fs" />
     <Compile Include="Parsers.fs" />
     <Compile Include="Deduplication.fs" />
-    <Compile Include="Classification.fs" />
     <Compile Include="ImportService.fs" />
   </ItemGroup>
 

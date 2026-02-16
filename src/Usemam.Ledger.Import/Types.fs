@@ -17,24 +17,28 @@ type RawTransaction = {
     IsCredit: bool
 }
 
-type ImportResult =
-    | Imported of Usemam.Ledger.Domain.TransactionType
-    | Duplicate of RawTransaction * existing: Usemam.Ledger.Domain.TransactionType
-    | Skipped of RawTransaction * reason: string
-    | Transfer of source: RawTransaction * dest: RawTransaction
-
-type ImportSummary = {
-    TotalRows: int
-    Imported: int
-    Duplicates: int
-    Skipped: int
-    Transfers: int
-    Results: ImportResult list
-}
-
 type PreviewTransaction = {
     Raw: RawTransaction
     IsDuplicate: bool
     IsTransfer: bool
     Category: string
+}
+
+/// Input for building domain transactions from confirmed import data
+type ImportTransaction = {
+    Date: DateTimeOffset
+    Amount: decimal
+    Description: string
+    Category: string
+    IsCredit: bool
+    IsTransfer: bool
+    TransferAccountName: string
+}
+
+/// Summary of a parsed preview
+type PreviewSummary = {
+    Total: int
+    Credits: int
+    Debits: int
+    Duplicates: int
 }

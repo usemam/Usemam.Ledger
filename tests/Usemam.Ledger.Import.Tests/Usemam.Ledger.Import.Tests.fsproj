@@ -9,6 +9,7 @@
     <Compile Include="FormatDetectorTests.fs" />
     <Compile Include="ParsersTests.fs" />
     <Compile Include="DeduplicationTests.fs" />
+    <Compile Include="ImportServiceTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
