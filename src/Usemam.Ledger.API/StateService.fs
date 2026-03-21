@@ -24,7 +24,7 @@ type StorageConfiguration =
 
 type IStateService =
     abstract member GetState: unit -> State
-    abstract member AddTransactions: TransactionType list -> Result<unit>
+    abstract member RunCommand: ICommand -> Result<unit>
     abstract member GetAccountByName: string -> AccountType option
 
 type StateService(configuration: IConfiguration) =
@@ -39,7 +39,7 @@ type StateService(configuration: IConfiguration) =
 
     let config = loadStorageConfiguration()
 
-    let mutable state =
+    let mutable tracker =
         let loadResult =
             match config.StorageType.ToLowerInvariant() with
             | "mongodb" | "mongo" ->
@@ -49,7 +49,7 @@ type StateService(configuration: IConfiguration) =
                 let context = JsonContext(config)
                 context.LoadState()
         match loadResult with
-        | Success tracker -> tracker.state
+        | Success t -> CommandTracker(t.state, [], [])
         | Failure msg -> failwith (sprintf "Failed to load state: %s" msg)
 
     let saveState newState =
@@ -62,24 +62,20 @@ type StateService(configuration: IConfiguration) =
             context.SaveState(newState)
 
     interface IStateService with
-        member _.GetState() = state
+        member _.GetState() = tracker.state
 
         member _.GetAccountByName(name: string) =
-            state.accounts.getByName name
+            tracker.state.accounts.getByName name
 
-        member _.AddTransactions(transactions: TransactionType list) =
+        member _.RunCommand(cmd: ICommand) =
             try
-                // Add each transaction to the state using pushTransaction
-                let newState =
-                    transactions
-                    |> List.fold (fun (s: State) t -> s.pushTransaction t) state
-
-                // Save and update state
-                match saveState newState with
-                | Success () ->
-                    state <- newState
-                    Success ()
-                | Failure msg ->
-                    Failure msg
+                match tracker.run cmd with
+                | Success newTracker ->
+                    match saveState newTracker.state with
+                    | Success () ->
+                        tracker <- newTracker
+                        Success ()
+                    | Failure msg -> Failure msg
+                | Failure msg -> Failure msg
             with ex ->
                 Failure ex.Message
