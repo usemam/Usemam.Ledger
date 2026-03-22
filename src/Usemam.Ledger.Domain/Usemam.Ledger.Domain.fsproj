@@ -13,6 +13,7 @@
     <Compile Include="State.fs" />
     <Compile Include="Queries.fs" />
     <Compile Include="Commands.fs" />
+    <Compile Include="ImportCommand.fs" />
   </ItemGroup>
 
 </Project>

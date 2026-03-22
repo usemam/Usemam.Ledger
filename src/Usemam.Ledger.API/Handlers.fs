@@ -6,6 +6,7 @@ open Microsoft.AspNetCore.Http
 open Giraffe
 
 open Usemam.Ledger.Domain
+open Usemam.Ledger.Domain.Commands
 open Usemam.Ledger.Domain.Transaction
 open Usemam.Ledger.Import
 open Usemam.Ledger.API.Dtos
@@ -238,7 +239,8 @@ let confirmImport : HttpHandler =
                 }
                 return! RequestErrors.badRequest (json result) next ctx
             | Ok transactions ->
-                match stateService.AddTransactions transactions with
+                let cmd = ImportCommand(transactions) :> ICommand
+                match stateService.RunCommand cmd with
                 | Success () ->
                     let result : ImportResultDto = {
                         Success = true

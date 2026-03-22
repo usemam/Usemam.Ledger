@@ -29,6 +29,7 @@ type Command =
     | Exit
     | Restore
     | Backup
+    | RecalculateBalances
 
 let isExit command =
     match command with

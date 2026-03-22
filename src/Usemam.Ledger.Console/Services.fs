@@ -100,6 +100,10 @@ let restore (tracker : CommandTracker) =
             return! Failure "Configuration not loaded"
     }
 
+let recalculateBalances (tracker : CommandTracker) =
+    RecalculateBalancesCommand()
+    |> tracker.run
+
 let backup (tracker : CommandTracker) =
     result {
         match Storage.getConfig() with
@@ -129,3 +133,4 @@ let fromCommand (command : Command) =
     | Exit -> exit
     | Restore -> restore
     | Backup -> backup
+    | RecalculateBalances -> recalculateBalances
