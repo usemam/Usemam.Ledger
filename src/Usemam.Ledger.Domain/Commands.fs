@@ -143,3 +143,44 @@ type DebitCommand(amount, source, dest, clock) =
                     |> fun s -> s.popTransaction()
                     |> fun s -> s.replaceAccount (Account.map (fun balance -> balance + money) a)
             }
+
+type RecalculateBalancesCommand() =
+    let mutable oldBalances : Map<string, Money> = Map.empty
+
+    interface ICommand with
+        member _.run state =
+            let deltas =
+                state.transactions
+                |> Seq.fold (fun (map: Map<string, Money>) t ->
+                    match t.Description with
+                    | Credit (acc, _) ->
+                        map |> Map.change acc.Name (fun b -> Some (defaultArg b Money.Zero + t.Sum))
+                    | Debit (acc, _) ->
+                        map |> Map.change acc.Name (fun b -> Some (defaultArg b Money.Zero - t.Sum))
+                    | Transfer (src, dst) ->
+                        map
+                        |> Map.change src.Name (fun b -> Some (defaultArg b Money.Zero - t.Sum))
+                        |> Map.change dst.Name (fun b -> Some (defaultArg b Money.Zero + t.Sum))
+                ) Map.empty
+            oldBalances <- state.accounts |> Seq.map (fun a -> a.Name, a.Balance) |> Map.ofSeq
+            let newState =
+                state.accounts
+                |> Seq.fold (fun (s: State) account ->
+                    match Map.tryFind account.Name deltas with
+                    | Some newBalance ->
+                        printfn "%s: %O -> %O" account.Name account.Balance newBalance
+                        s.replaceAccount (Account.map (fun _ -> newBalance) account)
+                    | None -> s
+                ) state
+            Success newState
+
+        member _.rollback state =
+            let newState =
+                state.accounts
+                |> Seq.fold (fun (s: State) account ->
+                    match Map.tryFind account.Name oldBalances with
+                    | Some oldBalance ->
+                        s.replaceAccount (Account.map (fun _ -> oldBalance) account)
+                    | None -> s
+                ) state
+            Success newState

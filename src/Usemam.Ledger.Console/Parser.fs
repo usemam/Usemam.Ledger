@@ -65,6 +65,7 @@ let private pHelpCommand = strWs Keywords.Help |>> (fun _ -> Help)
 let private pExitCommand = strWs Keywords.Exit |>> (fun _ -> Exit)
 let private pRestoreCommand = strWs Keywords.Restore |>> (fun _ -> Restore)
 let private pBackupCommand = strWs Keywords.Backup |>> (fun _ -> Backup)
+let private pRecalculateBalancesCommand = strWs Keywords.RecalculateBalances |>> (fun _ -> RecalculateBalances)
 
 let private pCommand =
   pShowCommand <|>
@@ -79,7 +80,8 @@ let private pCommand =
   pHelpCommand <|>
   pExitCommand <|>
   pRestoreCommand <|>
-  pBackupCommand
+  pBackupCommand <|>
+  pRecalculateBalancesCommand
 
 let parse input =
   match run pCommand input with

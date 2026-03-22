@@ -60,6 +60,9 @@ let Restore = "restore"
 [<Literal>]
 let Backup = "backup"
 
+[<Literal>]
+let RecalculateBalances = "recalculate balances"
+
 let AllKeywords = [
     Accounts
     AddAccount
@@ -74,6 +77,7 @@ let AllKeywords = [
     Last
     On
     Redo
+    RecalculateBalances
     Restore
     SetAccount
     Show
