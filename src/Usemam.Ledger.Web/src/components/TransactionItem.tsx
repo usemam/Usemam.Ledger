@@ -3,6 +3,7 @@ import { Money } from "./Money";
 
 interface TransactionItemProps {
   transaction: TransactionDto;
+  runningBalance?: number;
 }
 
 function getTransactionDescription(transaction: TransactionDto): string {
@@ -19,7 +20,7 @@ function getTransactionDescription(transaction: TransactionDto): string {
 }
 
 // Desktop Table Row Component
-export function TransactionItem({ transaction }: TransactionItemProps) {
+export function TransactionItem({ transaction, runningBalance }: TransactionItemProps) {
   return (
     <tr className={`transaction-row transaction-${transaction.type.toLowerCase()}`}>
       <td>{new Date(transaction.date).toLocaleDateString()}</td>
@@ -29,12 +30,17 @@ export function TransactionItem({ transaction }: TransactionItemProps) {
         <Money money={transaction.amount} />
       </td>
       <td>{transaction.description || "-"}</td>
+      <td className="amount">
+        {runningBalance !== undefined ? (
+          <Money money={{ amount: runningBalance, currency: transaction.amount.currency }} />
+        ) : "-"}
+      </td>
     </tr>
   );
 }
 
 // Mobile Card Component
-export function TransactionCard({ transaction }: TransactionItemProps) {
+export function TransactionCard({ transaction, runningBalance }: TransactionItemProps) {
   const typeClass = transaction.type.toLowerCase();
 
   return (
@@ -54,6 +60,11 @@ export function TransactionCard({ transaction }: TransactionItemProps) {
         <span className="transaction-card-amount">
           <Money money={transaction.amount} />
         </span>
+        {runningBalance !== undefined && (
+          <span className="transaction-card-balance">
+            Balance: <Money money={{ amount: runningBalance, currency: transaction.amount.currency }} />
+          </span>
+        )}
         {transaction.description && (
           <span className="transaction-card-notes">{transaction.description}</span>
         )}

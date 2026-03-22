@@ -83,6 +83,8 @@ export function AccountDetails() {
         <h3>Transactions</h3>
         <TransactionList
           transactions={transactions}
+          accountName={decodedName}
+          accountBalance={account.balance.amount}
           isLoading={transactionsLoading}
           error={transactionsError}
           isFetchingNextPage={isFetchingNextPage}
