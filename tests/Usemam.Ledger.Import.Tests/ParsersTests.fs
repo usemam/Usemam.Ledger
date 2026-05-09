@@ -87,8 +87,8 @@ Cleared,10/15/2025,"TTOBONGEE CHICKEN",4.96,,JOHN DOE"""
 
 [<Fact>]
 let ``WellsFargo parser parses valid CSV without headers`` () =
-    let line1 = "\"10/17/2025\",\"2366.07\",\"*\",\"\",\"EMPLOYER PAYROLL DEPOSIT\""
-    let line2 = "\"10/16/2025\",\"-474.60\",\"*\",\"\",\"PURCHASE AUTHORIZED\""
+    let line1 = "\"10/17/2025\",\"EMPLOYER PAYROLL DEPOSIT\",\"2366.07\",\"\",\"Posted\""
+    let line2 = "\"10/16/2025\",\"PURCHASE AUTHORIZED\",\"-474.60\",\"\",\"Posted\""
     let content = line1 + Environment.NewLine + line2
     let path = createTempFile content
     try

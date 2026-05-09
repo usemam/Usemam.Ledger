@@ -154,13 +154,13 @@ module Parsers =
                 lines
                 |> Array.choose (fun line ->
                     let parts = splitCsvLine line
-                    if parts.Length >= 5 then
-                        match parseDate parts.[0], parseDecimal parts.[1] with
+                    if parts.Length >= 3 then
+                        match parseDate parts.[0], parseDecimal parts.[2] with
                         | Some date, Some amount ->
                             Some {
                                 Date = date
                                 Amount = abs amount
-                                Description = parts.[4]
+                                Description = parts.[1]
                                 Category = None
                                 IsCredit = amount > 0m
                             }
